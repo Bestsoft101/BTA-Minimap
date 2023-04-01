@@ -295,6 +295,9 @@ public class MapRender implements IWorldListener {
 	}
 	
 	private void updateChunks() {
+		int updates = 0;
+		int max = minimap.config.updateSpeed.value;
+		
 		for(int i = -viewRadius; i <= viewRadius; i++) {
 			for(int j = -viewRadius; j <= viewRadius; j++) {
 				int chunkX = playerChunkX + i;
@@ -339,7 +342,10 @@ public class MapRender implements IWorldListener {
 					chunk.tile = -1;
 				}
 				
-				return;
+				updates++;
+				if(updates >= max) {
+					return;
+				}
 			}
 		}
 	}

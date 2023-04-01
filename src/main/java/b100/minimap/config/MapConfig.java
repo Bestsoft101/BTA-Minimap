@@ -5,18 +5,13 @@ import java.util.List;
 
 public class MapConfig extends ConfigBase {
 	
-	public IntegerOption width = new IntegerOption("width", 32);
-	public RangedIntegerOption position = new RangedIntegerOption("position", 1, new int[] {0, 1, 2, 3});
-	public RangedIntegerOption shadeType = new RangedIntegerOption("shadeType", 1, new int[] {0, 1});
+	public IntegerOption width = new IntegerOption("width", 32).setMinMax(1, 100);
+	public IntegerOption position = new IntegerOption("position", 1).setMinMax(0, 3);
+	public IntegerOption shadeType = new IntegerOption("shadeType", 1).setMinMax(0, 1);
 	public BooleanOption lighting = new BooleanOption("lighting", true);
 	public IntegerOption zoomLevel = new IntegerOption("zoomLevel", 0);
 	public BooleanOption fullscreenMap = new BooleanOption("fullscreenMap", false);
 	public IntegerOption fullscreenZoomLevel = new IntegerOption("zoomLevel", 0);
-	
-	{
-		width.minValue = 1;
-		width.maxValue = 100;
-	}
 	
 	@Override
 	public List<Option<?>> getAllOptions() {

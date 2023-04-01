@@ -19,10 +19,11 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 		guiOptionsContainer = add(new GuiOptionsContainer(this));
 		guiOptionsContainer.add("Map Visible", new GuiOptionButtonBoolean(this, minimap.config.mapVisible));
 		guiOptionsContainer.add("Fullscreen Map", new GuiOptionButtonBoolean(this, minimap.config.mapConfig.fullscreenMap));
-		guiOptionsContainer.add("Position", new GuiOptionButtonInteger(this, minimap.config.mapConfig.position));
-		guiOptionsContainer.add("Size", new GuiOptionButtonScrollable(this, minimap.config.mapConfig.width));
-		guiOptionsContainer.add("Shade Type", new GuiOptionButtonInteger(this, minimap.config.mapConfig.shadeType).addOptionListener(this));
+		guiOptionsContainer.add("Position", new GuiOptionButtonInteger(this, minimap.config.mapConfig.position).setScrollingEnabled(false));
+		guiOptionsContainer.add("Size", new GuiOptionButtonInteger(this, minimap.config.mapConfig.width));
+		guiOptionsContainer.add("Shade Type", new GuiOptionButtonInteger(this, minimap.config.mapConfig.shadeType).setScrollingEnabled(false).addOptionListener(this));
 		guiOptionsContainer.add("Lighting", new GuiOptionButtonBoolean(this, minimap.config.mapConfig.lighting).addOptionListener(this));
+		guiOptionsContainer.add("Update Speed", new GuiOptionButtonInteger(this, minimap.config.updateSpeed));
 		
 		guiOptionsContainer.addNav(new GuiButtonNavigation(this, "Close", guiOptionsContainer).addActionListener((e) -> back()));
 		guiOptionsContainer.addNav(new GuiButtonNavigation(this, "Keybinds", guiOptionsContainer).addActionListener((e) -> utils.displayGui(new GuiConfigInput(this))));

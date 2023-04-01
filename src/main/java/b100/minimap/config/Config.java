@@ -10,19 +10,21 @@ public class Config extends ConfigBase {
 	public MapConfig mapConfig = new MapConfig();
 	
 	public BooleanOption mapVisible = new BooleanOption("mapVisible", true);
+	public IntegerOption updateSpeed = new IntegerOption("updateSpeed", 1).setMinMax(1, 16);
 
 	public Keybind keyMap = new Keybind("keyMap", Keyboard.KEY_M);
 	public Keybind keyFullscreen = new Keybind("keyFullscreen", Keyboard.KEY_X);
 	public Keybind keyZoomIn = new Keybind("keyZoomIn", Keyboard.KEY_ADD);
 	public Keybind keyZoomOut = new Keybind("keyZoomOut", Keyboard.KEY_SUBTRACT);
 	
-	public Keybind[] keyBinds = new Keybind[] { keyMap, keyFullscreen, keyZoomIn, keyZoomOut };
-
+	public Keybind[] keyBinds = new Keybind[] { keyMap, keyFullscreen, keyZoomIn, keyZoomOut};
+	
 	@Override
 	public List<Option<?>> getAllOptions() {
 		List<Option<?>> options = new ArrayList<>();
 
 		options.add(mapVisible);
+		options.add(updateSpeed);
 		
 		for(int i=0; i < keyBinds.length; i++) {
 			options.add(keyBinds[i]);
