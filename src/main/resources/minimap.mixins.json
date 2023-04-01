@@ -1,0 +1,17 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "b100.minimap.mixin",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [
+    ],
+    "client": [
+		"EntityRenderMixin",
+		"MinecraftMixin",
+		"RenderEngineMixin",
+		"RenderGlobalMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+  }
+}
