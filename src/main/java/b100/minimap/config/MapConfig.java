@@ -5,7 +5,7 @@ import java.util.List;
 
 public class MapConfig extends ConfigBase {
 	
-	public IntegerOption width = new IntegerOption("width", 384);
+	public IntegerOption width = new IntegerOption("width", 32);
 	public RangedIntegerOption position = new RangedIntegerOption("position", 1, new int[] {0, 1, 2, 3});
 	public RangedIntegerOption shadeType = new RangedIntegerOption("shadeType", 1, new int[] {0, 1});
 	public BooleanOption lighting = new BooleanOption("lighting", true);
