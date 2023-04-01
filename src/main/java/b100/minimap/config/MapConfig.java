@@ -12,6 +12,7 @@ public class MapConfig extends ConfigBase {
 	public IntegerOption zoomLevel = new IntegerOption("zoomLevel", 0);
 	public BooleanOption fullscreenMap = new BooleanOption("fullscreenMap", false);
 	public IntegerOption fullscreenZoomLevel = new IntegerOption("zoomLevel", 0);
+	public BooleanOption rotateMap = new BooleanOption("rotateMap", false);
 	
 	@Override
 	public List<Option<?>> getAllOptions() {
@@ -24,6 +25,7 @@ public class MapConfig extends ConfigBase {
 		options.add(zoomLevel);
 		options.add(fullscreenMap);
 		options.add(fullscreenZoomLevel);
+		options.add(rotateMap);
 		
 		return options;
 	}

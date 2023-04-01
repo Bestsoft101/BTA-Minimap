@@ -24,6 +24,7 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 		guiOptionsContainer.add("Shade Type", new GuiOptionButtonInteger(this, minimap.config.mapConfig.shadeType).setScrollingEnabled(false).addOptionListener(this));
 		guiOptionsContainer.add("Lighting", new GuiOptionButtonBoolean(this, minimap.config.mapConfig.lighting).addOptionListener(this));
 		guiOptionsContainer.add("Update Speed", new GuiOptionButtonInteger(this, minimap.config.updateSpeed));
+		guiOptionsContainer.add("Rotate Map", new GuiOptionButtonBoolean(this, minimap.config.mapConfig.rotateMap));
 		
 		guiOptionsContainer.addNav(new GuiButtonNavigation(this, "Close", guiOptionsContainer).addActionListener((e) -> back()));
 		guiOptionsContainer.addNav(new GuiButtonNavigation(this, "Keybinds", guiOptionsContainer).addActionListener((e) -> utils.displayGui(new GuiConfigInput(this))));

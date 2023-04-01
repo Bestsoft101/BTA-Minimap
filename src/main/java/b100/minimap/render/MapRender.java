@@ -151,6 +151,9 @@ public class MapRender implements IWorldListener {
 			glDepthFunc(GL_ALWAYS);
 			
 			int p = tileSize * 2;
+			if(minimap.config.mapConfig.rotateMap.value) {
+				p *= 4;
+			}
 			
 			tessellator.startDrawingQuads();
 			tessellator.setColorOpaque_F(1.0f, 1.0f, 1.0f);
@@ -183,6 +186,11 @@ public class MapRender implements IWorldListener {
 		}
 		glPushMatrix();
 		glTranslated(mapCenterX, mapCenterY, 0);
+		
+		if(minimap.config.mapConfig.rotateMap.value) {
+			glPushMatrix();
+			glRotated(-rotationYaw + 180.0f, 0, 0, 1);
+		}
 		
 		glColor3d(1.0, 1.0, 1.0);
 		glEnable(GL_TEXTURE_2D);
@@ -227,17 +235,24 @@ public class MapRender implements IWorldListener {
 		if(startedDrawing) {
 			tessellator.draw();
 		}
+
+		if(minimap.config.mapConfig.rotateMap.value) {
+			glPopMatrix();
+		}
 		
-		glEnable(GL_BLEND);
-		
+
 		int tex = minimap.minecraftHelper.getTexture("%blur%/player_arrow.png");
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, tex);
 		
+		glEnable(GL_BLEND);
 		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_TEXTURE_2D);
 		glColor3d(1.0, 0.0, 0.0);
+
+		if(!minimap.config.mapConfig.rotateMap.value) {
+			glRotated(rotationYaw + 180.0f, 0, 0, 1);
+		}
 		
-		glRotated(rotationYaw + 180.0f, 0, 0, 1);
 		tessellator.startDrawingQuads();
 		drawRectangle(tessellator, -8, -8, 16, 16, 0, 0, 1, 1, 0);
 		tessellator.draw();
