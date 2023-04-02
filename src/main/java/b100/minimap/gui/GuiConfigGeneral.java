@@ -1,6 +1,7 @@
 package b100.minimap.gui;
 
 import b100.minimap.Minimap;
+import b100.minimap.config.Config;
 import b100.minimap.config.MapConfig;
 import b100.minimap.config.Option;
 
@@ -16,15 +17,20 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 	public void onInit() {
 		Minimap.log("Init Gui Config");
 		
+		Config config = minimap.config;
+		
 		guiOptionsContainer = add(new GuiOptionsContainer(this));
-		guiOptionsContainer.add("Map Visible", new GuiOptionButtonBoolean(this, minimap.config.mapVisible));
-		guiOptionsContainer.add("Fullscreen Map", new GuiOptionButtonBoolean(this, minimap.config.mapConfig.fullscreenMap));
-		guiOptionsContainer.add("Position", new GuiOptionButtonInteger(this, minimap.config.mapConfig.position).setScrollingEnabled(false));
-		guiOptionsContainer.add("Size", new GuiOptionButtonInteger(this, minimap.config.mapConfig.width));
-		guiOptionsContainer.add("Shade Type", new GuiOptionButtonInteger(this, minimap.config.mapConfig.shadeType).setScrollingEnabled(false).addOptionListener(this));
-		guiOptionsContainer.add("Lighting", new GuiOptionButtonBoolean(this, minimap.config.mapConfig.lighting).addOptionListener(this));
-		guiOptionsContainer.add("Update Speed", new GuiOptionButtonInteger(this, minimap.config.updateSpeed));
-		guiOptionsContainer.add("Rotate Map", new GuiOptionButtonBoolean(this, minimap.config.mapConfig.rotateMap));
+		guiOptionsContainer.add("Map Visible", new GuiOptionButtonBoolean(this, config.mapVisible));
+		guiOptionsContainer.add("Fullscreen Map", new GuiOptionButtonBoolean(this, config.mapConfig.fullscreenMap));
+		guiOptionsContainer.add("Position", new GuiOptionButtonInteger(this, config.mapConfig.position).setScrollingEnabled(false));
+		guiOptionsContainer.add("Size", new GuiOptionButtonInteger(this, config.mapConfig.width));
+		guiOptionsContainer.add("Shade Type", new GuiOptionButtonInteger(this, config.mapConfig.shadeType).setScrollingEnabled(false).addOptionListener(this));
+		guiOptionsContainer.add("Lighting", new GuiOptionButtonBoolean(this, config.mapConfig.lighting).addOptionListener(this));
+		guiOptionsContainer.add("Update Speed", new GuiOptionButtonInteger(this, config.updateSpeed));
+		guiOptionsContainer.add("Rotate Map", new GuiOptionButtonBoolean(this, config.mapConfig.rotateMap));
+		guiOptionsContainer.add("Frame Opacity", new GuiOptionButtonInteger(this, config.mapConfig.frameOpacity));
+		guiOptionsContainer.add("Round Map", new GuiOptionButtonBoolean(this, config.mapConfig.roundMap).addOptionListener(this));
+		guiOptionsContainer.add("Debug", new GuiButton(this, "->").addActionListener((e) -> utils.displayGui(new GuiConfigDebug(this))));
 		
 		guiOptionsContainer.addNav(new GuiButtonNavigation(this, "Close", guiOptionsContainer).addActionListener((e) -> back()));
 		guiOptionsContainer.addNav(new GuiButtonNavigation(this, "Keybinds", guiOptionsContainer).addActionListener((e) -> utils.displayGui(new GuiConfigInput(this))));
@@ -40,6 +46,9 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 		MapConfig config = minimap.config.mapConfig;
 		if(option == config.shadeType || option == config.lighting) {
 			minimap.mapRender.updateAllTiles();
+		}
+		if(option == config.roundMap) {
+			minimap.updateStyle();
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package b100.minimap.render;
 
+import static b100.minimap.utils.Utils.*;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.ByteBuffer;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 import b100.minimap.Minimap;
 import b100.minimap.config.MapConfig;
+import b100.minimap.render.style.MapStyle;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.MathHelper;
 import net.minecraft.src.Tessellator;
@@ -41,9 +43,11 @@ public class MapRender implements IWorldListener {
 	private ByteBuffer colorBuffer = ByteBuffer.allocateDirect(16 * 16 * 4).order(ByteOrder.nativeOrder());
 	private IntBuffer colorBufferInt = colorBuffer.asIntBuffer();
 	
-	private int sphereTexture;
-	
 	public int viewRadius = 16;
+	
+	public final int maskTexture;
+	public final int mapTexture;
+	public boolean spherical = false;
 	
 	public MapRender(Minimap minimap) {
 		this.minimap = minimap;
@@ -51,8 +55,10 @@ public class MapRender implements IWorldListener {
 		mapTileManager = new MapTileManager(minimap, 64);
 		mapTileRenderer = new MapTileRenderer(minimap);
 		
-		sphereTexture = minimap.minecraftHelper.generateTexture();
-		glBindTexture(GL_TEXTURE_2D, sphereTexture);
+		maskTexture = minimap.minecraftHelper.generateTexture();
+		mapTexture = minimap.minecraftHelper.generateTexture();
+		
+		glBindTexture(GL_TEXTURE_2D, maskTexture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -63,6 +69,11 @@ public class MapRender implements IWorldListener {
 		generateSphereTexture(buffer, sphereTextureSize, sphereTextureSize, 0x0, 0xFFFFFFFF);
 		buffer.position(0);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sphereTextureSize, sphereTextureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	}
+	
+	public void setStyle(MapStyle style) {
+		setTextureImage(mapTexture, style.getMapTexture(), true, false);
+		setTextureImage(maskTexture, style.getMaskTexture(), true, false);
 	}
 	
 	public void renderMap(float partialTicks) {
@@ -139,33 +150,31 @@ public class MapRender implements IWorldListener {
 		int mapCenterY = y + height / 2;
 		
 		int tileSize = 16 * zoom;
-
-		if(true) {
+		
+		/////////////////////////////
+		
+		glEnable(GL_BLEND);
+		glBlendFunc(770, 771);
+		
+		if(minimap.config.mask.value) {
 			glEnable(GL_DEPTH_TEST);
-			
+			glDepthFunc(GL_ALWAYS);
 			glColorMask(false, false, false, false);
-			
 			glDisable(GL_TEXTURE_2D);
 			glColor3d(1.0, 1.0, 1.0);
-
-			glDepthFunc(GL_ALWAYS);
-			
-			int p = tileSize * 2;
-			if(minimap.config.mapConfig.rotateMap.value) {
-				p *= 4;
-			}
 			
 			tessellator.startDrawingQuads();
 			tessellator.setColorOpaque_F(1.0f, 1.0f, 1.0f);
-			drawRectangle(tessellator, x - p, y - p, width + p * 2, height + p * 2, 0, 0, 1, 1, 32);
+			
+			drawRectangle(tessellator, 0, 0, displayWidth, displayHeight, 0, 0, 0, 0, 32);
+			
 			tessellator.setColorOpaque_F(0.0f, 0.0f, 1.0f);
 			drawRectangle(tessellator, x, y, width, height, 0, 0, 1, 1, -32);
 			tessellator.draw();
 			
 			glDepthFunc(GL_LEQUAL);
-
 			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, sphereTexture);
+			glBindTexture(GL_TEXTURE_2D, maskTexture);
 
 			tessellator.startDrawingQuads();
 			tessellator.setColorOpaque_F(0.0f, 1.0f, 0.0f);
@@ -173,17 +182,15 @@ public class MapRender implements IWorldListener {
 			tessellator.draw();
 			
 			glColorMask(true, true, true, true);
-			
-			glDisable(GL_TEXTURE_2D);
-			glEnable(GL_BLEND);
-			glBlendFunc(770, 771);
-			glColor4d(0.1, 0.1, 0.1, 0.9);
-			tessellator.startDrawingQuads();
-			drawRectangle(tessellator, x, y, width, height, 0, 0, 0, 0, 0);
-			tessellator.draw();
-			glDisable(GL_BLEND);
-			
 		}
+		
+		glDisable(GL_TEXTURE_2D);
+		glColor4d(0.1, 0.1, 0.1, 0.9);
+		tessellator.startDrawingQuads();
+		drawRectangle(tessellator, x, y, width, height, 0, 0, 0, 0, 0);
+		tessellator.draw();
+		
+		
 		glPushMatrix();
 		glTranslated(mapCenterX, mapCenterY, 0);
 		
@@ -245,7 +252,6 @@ public class MapRender implements IWorldListener {
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, tex);
 		
-		glEnable(GL_BLEND);
 		glDisable(GL_DEPTH_TEST);
 		glColor3d(1.0, 0.0, 0.0);
 
@@ -259,6 +265,17 @@ public class MapRender implements IWorldListener {
 		
 		glPopMatrix();
 
+		float frameOpacity = minimap.config.mapConfig.frameOpacity.value / 100.0f;
+		if(frameOpacity > 0.0f) {
+			glDisable(GL_ALPHA_TEST);
+			glBindTexture(GL_TEXTURE_2D, mapTexture);
+			glColor4f(1.0f, 1.0f, 1.0f, frameOpacity);
+			tessellator.startDrawingQuads();
+			drawRectangle(tessellator, x, y, width, height, 0.0f, 0.0f, 1.0f, 1.0f, 0);
+			tessellator.draw();
+			glEnable(GL_ALPHA_TEST);
+		}
+		
 //		glBindTexture(GL_TEXTURE_2D, mapTileManager.texture);
 //		glDisable(GL_TEXTURE_2D);
 //		glColor3d(0.0, 0.0, 0.0);
@@ -451,14 +468,6 @@ public class MapRender implements IWorldListener {
 				buffer.put(a);
 			}
 		}
-	}
-	
-	private float distance(float x0, float y0, float x1, float y1) {
-		return length(x1 - x0, y1 - y0);
-	}
-	
-	private float length(float x, float y) {
-		return (float) Math.sqrt(x * x + y * y);
 	}
 
 }

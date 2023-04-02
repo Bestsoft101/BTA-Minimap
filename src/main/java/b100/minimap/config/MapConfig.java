@@ -13,6 +13,8 @@ public class MapConfig extends ConfigBase {
 	public BooleanOption fullscreenMap = new BooleanOption("fullscreenMap", false);
 	public IntegerOption fullscreenZoomLevel = new IntegerOption("zoomLevel", 0);
 	public BooleanOption rotateMap = new BooleanOption("rotateMap", false);
+	public BooleanOption roundMap = new BooleanOption("roundMap", true);
+	public IntegerOption frameOpacity = new IntegerOption("frameOpacity", 100).setMinMax(0, 100);
 	
 	@Override
 	public List<Option<?>> getAllOptions() {
@@ -26,6 +28,8 @@ public class MapConfig extends ConfigBase {
 		options.add(fullscreenMap);
 		options.add(fullscreenZoomLevel);
 		options.add(rotateMap);
+		options.add(roundMap);
+		options.add(frameOpacity);
 		
 		return options;
 	}

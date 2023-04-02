@@ -19,6 +19,8 @@ import b100.minimap.mc.WorldAccess;
 import b100.minimap.render.MapRender;
 import b100.minimap.render.block.BlockRenderManager;
 import b100.minimap.render.block.TileColors;
+import b100.minimap.render.style.MapStyle;
+import b100.minimap.render.style.MapStyleGenerated;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.World;
 
@@ -55,6 +57,8 @@ public class Minimap {
 		tileColors.createTileColors();
 		blockRenderManager = new BlockRenderManager(tileColors);
 		guiUtils = new GuiUtilsImpl(mc);
+		
+		updateStyle();
 	}
 	
 	public void loadConfig() {
@@ -78,6 +82,16 @@ public class Minimap {
 		config.mapConfig.write(new File(configFolder, "map.txt"));
 		
 		log("Done!");
+	}
+	
+	public void updateStyle() {
+		mapRender.setStyle(getMapStyleFromConfig());		
+	}
+	
+	public MapStyle getMapStyleFromConfig() {
+		//TODO
+		
+		return new MapStyleGenerated(config.mapConfig.roundMap.value);
 	}
 	
 	public File getConfigFolder() {
@@ -106,7 +120,7 @@ public class Minimap {
 			updateInput();
 		}
 		
-		if(config.mapVisible.value && (!guiUtils.isGuiOpened() || guiUtils.isMinimapGuiOpened())) {
+		if(config.mapVisible.value && minecraftHelper.isGuiVisible() && (!guiUtils.isGuiOpened() || guiUtils.isMinimapGuiOpened() || minecraftHelper.isChatOpened())) {
 			mapRender.renderMap(partialTicks);
 		}
 		
@@ -135,9 +149,9 @@ public class Minimap {
 	
 	public void keyEvent(Keybind keybind, boolean press) {
 		if(press) {
-			if(keybind == config.keyMap) {
-				guiUtils.displayGui(new GuiConfigGeneral(null));
-			}
+			if(keybind == config.keyMap) guiUtils.displayGui(new GuiConfigGeneral(null));
+			if(keybind == config.keyHideMap) config.mapVisible.value = !config.mapVisible.value;
+			
 			if(config.mapVisible.value) {
 				MapConfig mapConfig = config.mapConfig;
 				if(keybind == config.keyFullscreen) mapConfig.fullscreenMap.value = !mapConfig.fullscreenMap.value;

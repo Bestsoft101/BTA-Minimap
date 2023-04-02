@@ -3,15 +3,18 @@ package b100.minimap.mc;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.GLAllocation;
+import net.minecraft.src.GuiChat;
 import net.minecraft.src.IWorldAccess;
 import net.minecraft.src.TexturePackBase;
 import net.minecraft.src.World;
+import net.minecraft.src.helper.Buffer;
 
 public class MinecraftHelperImpl implements IMinecraftHelper {
 
@@ -96,6 +99,22 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public ByteBuffer getBufferWithCapacity(int capacity) {
+		Buffer.checkBufferSize(capacity);
+		return Buffer.buffer;
+	}
+
+	@Override
+	public boolean isGuiVisible() {
+		return mc.gameSettings.immersiveMode.value <= 1;
+	}
+
+	@Override
+	public boolean isChatOpened() {
+		return mc.currentScreen instanceof GuiChat;
 	}
 
 }

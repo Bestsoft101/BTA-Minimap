@@ -2,6 +2,7 @@ package b100.minimap.mc;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.ByteBuffer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayerSP;
@@ -35,5 +36,11 @@ public interface IMinecraftHelper {
 	public int getTexture(String path);
 	
 	public BufferedImage getTextureAsImage(String path);
+	
+	public ByteBuffer getBufferWithCapacity(int capacity);
+	
+	public boolean isGuiVisible();
+	
+	public boolean isChatOpened();
 	
 }
