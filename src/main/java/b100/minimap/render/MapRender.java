@@ -251,7 +251,6 @@ public class MapRender implements IWorldListener {
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, tex);
 		
-		glDisable(GL_DEPTH_TEST);
 		glColor3d(1.0, 0.0, 0.0);
 
 		if(!minimap.config.mapConfig.rotateMap.value) {
@@ -259,7 +258,7 @@ public class MapRender implements IWorldListener {
 		}
 		
 		tessellator.startDrawingQuads();
-		drawRectangle(tessellator, -8, -8, 16, 16, 0, 0, 1, 1, 0);
+		drawRectangle(tessellator, -8, -8, 16, 16, 0, 0, 1, 1, 80);
 		tessellator.draw();
 		
 		glPopMatrix();
@@ -270,11 +269,12 @@ public class MapRender implements IWorldListener {
 			glBindTexture(GL_TEXTURE_2D, mapTexture);
 			glColor4f(1.0f, 1.0f, 1.0f, frameOpacity);
 			tessellator.startDrawingQuads();
-			drawRectangle(tessellator, x, y, width, height, 0.0f, 0.0f, 1.0f, 1.0f, 0);
+			drawRectangle(tessellator, x, y, width, height, 0.0f, 0.0f, 1.0f, 1.0f, 64);
 			tessellator.draw();
 			glEnable(GL_ALPHA_TEST);
 		}
-		
+
+		glDisable(GL_DEPTH_TEST);
 		
 		
 //		glBindTexture(GL_TEXTURE_2D, mapTileManager.texture);
