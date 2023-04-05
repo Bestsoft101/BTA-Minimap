@@ -23,6 +23,7 @@ import b100.minimap.render.style.MapStyle;
 import b100.minimap.render.style.MapStyleGenerated;
 import b100.minimap.render.style.MapStyleInternal;
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.Item;
 import net.minecraft.src.World;
 
 public class Minimap {
@@ -127,7 +128,12 @@ public class Minimap {
 			updateInput();
 		}
 		
-		if(config.mapVisible.value && minecraftHelper.isGuiVisible() && (!guiUtils.isGuiOpened() || guiUtils.isMinimapGuiOpened() || minecraftHelper.isChatOpened())) {
+		boolean unlocked = false;
+		if(config.requireItem.value == 0) unlocked = true;
+		if(config.requireItem.value == 1) unlocked = minecraftHelper.doesPlayerHaveItem(Item.toolCompass);
+		if(config.requireItem.value == 2) unlocked = minecraftHelper.doesPlayerHaveItem(Item.map);
+		
+		if(config.mapVisible.value && unlocked && minecraftHelper.isGuiVisible() && (!guiUtils.isGuiOpened() || guiUtils.isMinimapGuiOpened() || minecraftHelper.isChatOpened())) {
 			mapRender.renderMap(partialTicks);
 		}
 		

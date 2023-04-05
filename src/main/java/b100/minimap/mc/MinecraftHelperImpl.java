@@ -8,10 +8,13 @@ import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.GLAllocation;
 import net.minecraft.src.GuiChat;
 import net.minecraft.src.IWorldAccess;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.TexturePackBase;
 import net.minecraft.src.World;
 import net.minecraft.src.helper.Buffer;
@@ -115,6 +118,19 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	@Override
 	public boolean isChatOpened() {
 		return mc.currentScreen instanceof GuiChat;
+	}
+
+	@Override
+	public boolean doesPlayerHaveItem(Item item) {
+		EntityPlayer player = getThePlayer();
+		
+		for(int i=0; i < player.inventory.getSizeInventory(); i++) {
+			ItemStack stack = player.inventory.getStackInSlot(i);
+			if(stack != null && stack.getItem() == item) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

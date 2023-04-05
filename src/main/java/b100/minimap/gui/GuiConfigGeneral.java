@@ -31,6 +31,7 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 		guiOptionsContainer.add("Rotate Map", new GuiOptionButtonBoolean(this, config.mapConfig.rotateMap));
 		guiOptionsContainer.add("Frame Opacity", new GuiOptionButtonInteger(this, config.mapConfig.frameOpacity));
 		guiOptionsContainer.add("Round Map", new GuiOptionButtonBoolean(this, config.mapConfig.roundMap).addOptionListener(this));
+		guiOptionsContainer.add("Require Item", new GuiOptionButtonRequireItem(this, config.requireItem));
 		guiOptionsContainer.add("Debug", new GuiButton(this, "->").addActionListener((e) -> utils.displayGui(new GuiConfigDebug(this))));
 		
 		guiOptionsContainer.addNav(new GuiButtonNavigation(this, "Close", guiOptionsContainer).addActionListener((e) -> back()));

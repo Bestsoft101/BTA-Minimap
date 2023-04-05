@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.IWorldAccess;
+import net.minecraft.src.Item;
 import net.minecraft.src.World;
 
 public interface IMinecraftHelper {
@@ -42,5 +43,7 @@ public interface IMinecraftHelper {
 	public boolean isGuiVisible();
 	
 	public boolean isChatOpened();
+	
+	public boolean doesPlayerHaveItem(Item item);
 	
 }
