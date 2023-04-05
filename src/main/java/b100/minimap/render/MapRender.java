@@ -119,8 +119,8 @@ public class MapRender implements IWorldListener {
 		int displayWidth = minimap.minecraftHelper.getDisplayWidth();
 		int displayHeight = minimap.minecraftHelper.getDisplayHeight();
 
-		int width = mapConfig.width.value * 10;
-		int height = mapConfig.width.value * 10;
+		int width = mapConfig.width.value * 16;
+		int height = mapConfig.width.value * 16;
 		
 		int x, y;
 		int zoom;
@@ -242,12 +242,11 @@ public class MapRender implements IWorldListener {
 		if(startedDrawing) {
 			tessellator.draw();
 		}
-
+		
 		if(minimap.config.mapConfig.rotateMap.value) {
 			glPopMatrix();
 		}
 		
-
 		int tex = minimap.minecraftHelper.getTexture("%blur%/player_arrow.png");
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, tex);
@@ -275,6 +274,8 @@ public class MapRender implements IWorldListener {
 			tessellator.draw();
 			glEnable(GL_ALPHA_TEST);
 		}
+		
+		
 		
 //		glBindTexture(GL_TEXTURE_2D, mapTileManager.texture);
 //		glDisable(GL_TEXTURE_2D);

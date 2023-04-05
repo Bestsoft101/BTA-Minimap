@@ -8,13 +8,14 @@ import java.awt.image.BufferedImage;
 public class MapStyleGenerated implements MapStyle {
 
 	public int resolution = 1024;
-	public int color = 0x0f39ae;
+	public int color;
 	public float borderWidth = 8.0f;
 
 	private boolean round;
 
-	public MapStyleGenerated(boolean round) {
+	public MapStyleGenerated(boolean round, int color) {
 		this.round = round;
+		this.color = color;
 	}
 
 	@Override

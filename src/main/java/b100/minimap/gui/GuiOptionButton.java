@@ -23,7 +23,11 @@ public abstract class GuiOptionButton<E> extends GuiButton {
 	}
 	
 	public void updateText() {
-		this.text = option.value.toString();
+		this.text = getOptionValueString();
+	}
+	
+	public String getOptionValueString() {
+		return option.value.toString();
 	}
 	
 	public void onOptionValueChanged() {

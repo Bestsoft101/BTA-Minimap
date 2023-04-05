@@ -22,6 +22,7 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 		guiOptionsContainer = add(new GuiOptionsContainer(this));
 		guiOptionsContainer.add("Map Visible", new GuiOptionButtonBoolean(this, config.mapVisible));
 		guiOptionsContainer.add("Fullscreen Map", new GuiOptionButtonBoolean(this, config.mapConfig.fullscreenMap));
+		guiOptionsContainer.add("Style", new GuiOptionButtonMapStyle(this, config.mapStyle).addOptionListener(this));
 		guiOptionsContainer.add("Position", new GuiOptionButtonInteger(this, config.mapConfig.position).setScrollingEnabled(false));
 		guiOptionsContainer.add("Size", new GuiOptionButtonInteger(this, config.mapConfig.width));
 		guiOptionsContainer.add("Shade Type", new GuiOptionButtonInteger(this, config.mapConfig.shadeType).setScrollingEnabled(false).addOptionListener(this));
@@ -43,11 +44,12 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 
 	@Override
 	public void onOptionValueChanged(Option<?> option) {
-		MapConfig config = minimap.config.mapConfig;
-		if(option == config.shadeType || option == config.lighting) {
+		Config config = minimap.config;
+		MapConfig mapConfig = config.mapConfig;
+		if(option == mapConfig.shadeType || option == mapConfig.lighting) {
 			minimap.mapRender.updateAllTiles();
 		}
-		if(option == config.roundMap) {
+		if(option == mapConfig.roundMap || option == config.mapStyle) {
 			minimap.updateStyle();
 		}
 	}
