@@ -44,6 +44,8 @@ public interface IMinecraftHelper {
 	
 	public boolean isChatOpened();
 	
+	public boolean isDebugScreenOpened();
+	
 	public boolean doesPlayerHaveItem(Item item);
 	
 }

@@ -133,4 +133,9 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 		return false;
 	}
 
+	@Override
+	public boolean isDebugScreenOpened() {
+		return mc.gameSettings.showDebugScreen.value;
+	}
+
 }

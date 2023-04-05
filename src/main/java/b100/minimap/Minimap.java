@@ -133,7 +133,7 @@ public class Minimap {
 		if(config.requireItem.value == 1) unlocked = minecraftHelper.doesPlayerHaveItem(Item.toolCompass);
 		if(config.requireItem.value == 2) unlocked = minecraftHelper.doesPlayerHaveItem(Item.map);
 		
-		if(config.mapVisible.value && unlocked && minecraftHelper.isGuiVisible() && (!guiUtils.isGuiOpened() || guiUtils.isMinimapGuiOpened() || minecraftHelper.isChatOpened())) {
+		if(config.mapVisible.value && unlocked && minecraftHelper.isGuiVisible() && !minecraftHelper.isDebugScreenOpened() && (!guiUtils.isGuiOpened() || guiUtils.isMinimapGuiOpened() || minecraftHelper.isChatOpened())) {
 			mapRender.renderMap(partialTicks);
 		}
 		
