@@ -11,7 +11,7 @@ public class MapConfig extends ConfigBase {
 	public BooleanOption lighting = new BooleanOption("lighting", true);
 	public IntegerOption zoomLevel = new IntegerOption("zoomLevel", 0);
 	public BooleanOption fullscreenMap = new BooleanOption("fullscreenMap", false);
-	public IntegerOption fullscreenZoomLevel = new IntegerOption("zoomLevel", 0);
+	public IntegerOption fullscreenZoomLevel = new IntegerOption("fullscreenZoomLevel", 0);
 	public BooleanOption rotateMap = new BooleanOption("rotateMap", false);
 	public BooleanOption roundMap = new BooleanOption("roundMap", true);
 	public IntegerOption frameOpacity = new IntegerOption("frameOpacity", 100).setMinMax(0, 100);
