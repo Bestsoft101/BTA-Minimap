@@ -48,4 +48,12 @@ public interface IMinecraftHelper {
 	
 	public boolean doesPlayerHaveItem(Item item);
 	
+	public boolean isMultiplayer(World world);
+	
+	public String getWorldDirectoryName(World world);
+	
+	public String getServerName(World world);
+	
+	public boolean isCharacterAllowed(char c);
+	
 }

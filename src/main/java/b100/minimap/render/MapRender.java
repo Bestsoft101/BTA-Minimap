@@ -231,8 +231,8 @@ public class MapRender implements IWorldListener {
 				tessellator.startDrawingQuads();
 			}
 			
-			int x0 = (mapChunk.getPosX() * 16 - playerX) * zoom;
-			int z0 = (mapChunk.getPosZ() * 16 - playerZ) * zoom;
+			int x0 = (mapChunk.getPosX() * 16 - playerX) * zoom - (zoom / 2);
+			int z0 = (mapChunk.getPosZ() * 16 - playerZ) * zoom - (zoom / 2);
 			
 			if(x0 < wh && z0 < hh && x0 + tileSize > -wh && z0 + tileSize > -hh) {
 				renderTile(tessellator, tile, x0, z0, tileSize, tileSize, 0);

@@ -1,0 +1,129 @@
+package b100.minimap.gui;
+
+import java.util.Random;
+
+import b100.minimap.Minimap;
+import b100.minimap.gui.GuiNavigationContainer.Position;
+import b100.minimap.waypoint.Waypoint;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.MathHelper;
+
+public class GuiEditWaypoint extends GuiScreen {
+	
+	public String title;
+	
+	public Waypoint waypoint;
+	
+	public GuiNavigationContainer navTop;
+	public GuiNavigationContainer navBottom;
+	
+	public GuiContainerBox container;
+
+	public GuiTextField textFieldName;
+	public GuiTextField textFieldPosX;
+	public GuiTextField textFieldPosY;
+	public GuiTextField textFieldPosZ;
+	
+	public GuiTextComponentInteger textComponentX;
+	public GuiTextComponentInteger textComponentY;
+	public GuiTextComponentInteger textComponentZ;
+
+	public GuiTextElement textName;
+	public GuiTextElement textPosition;
+	public GuiTextElement textX;
+	public GuiTextElement textY;
+	public GuiTextElement textZ;
+	
+	public int playerOffsetX;
+	public int playerOffsetY;
+	public int playerOffsetZ;
+	
+	public GuiEditWaypoint(GuiScreen parentScreen) {
+		super(parentScreen);
+		setPlayerOffset();
+		
+		String name = "";
+		int color = new Random().nextInt() & 0xFFFFFF;
+		
+		this.waypoint = new Waypoint(name, playerOffsetX, playerOffsetY, playerOffsetZ, color);
+		this.title = "Create Waypoint";
+	}
+
+	public GuiEditWaypoint(GuiScreen parentScreen, Waypoint waypoint) {
+		super(parentScreen);
+		setPlayerOffset();
+		
+		this.waypoint = waypoint;
+		this.title = "Edit Waypoint";
+	}
+	
+	private void setPlayerOffset() {
+		EntityPlayer player = Minimap.instance.minecraftHelper.getThePlayer();
+		this.playerOffsetX = MathHelper.floor_double(player.posX);
+		this.playerOffsetY = MathHelper.floor_double(player.posY);
+		this.playerOffsetZ = MathHelper.floor_double(player.posZ);
+	}
+
+	@Override
+	public void onInit() {
+		this.container = add(new GuiContainerBox());
+		
+		this.navTop = add(new GuiNavigationContainer(this, container, Position.TOP));
+		this.navBottom = add(new GuiNavigationContainer(this, container, Position.BOTTOM));
+		
+		this.navTop.add(new GuiButtonNavigation(this, title, container));
+		this.navBottom.add(new GuiButtonNavigation(this, "Done", container).addActionListener((e) -> back()));
+		
+		this.textComponentX = new GuiTextComponentInteger(waypoint.x - playerOffsetX);
+		this.textComponentY = new GuiTextComponentInteger(waypoint.y - playerOffsetY);
+		this.textComponentZ = new GuiTextComponentInteger(waypoint.z - playerOffsetZ);
+		
+		this.textFieldName = container.add(new GuiTextField(this, waypoint.name));
+		this.textFieldPosX = container.add(new GuiTextField(this, textComponentX));
+		this.textFieldPosY = container.add(new GuiTextField(this, textComponentY));
+		this.textFieldPosZ = container.add(new GuiTextField(this, textComponentZ));
+
+		this.textName = add(new GuiTextElement("Name"));
+		this.textPosition = add(new GuiTextElement("Offset"));
+		this.textX = add(new GuiTextElement("x"));
+		this.textY = add(new GuiTextElement("y"));
+		this.textZ = add(new GuiTextElement("z"));
+	}
+	
+	@Override
+	public void onResize() {
+		final int paddingOuter = 2;
+		final int paddingInner = 1;
+		
+		int w = 150;
+		int h = 100;
+		
+		container.setSize(w, h);
+		container.setPosition((this.width - w) / 2, (this.height - h) / 2);
+		
+		int innerWidth = w - 2 * paddingOuter;
+		
+		int x1 = container.posX + paddingOuter;
+		int y1 = container.posY + paddingOuter;
+		
+		int lineHeight = 10;
+		int h1 = lineHeight + paddingInner;
+		
+		textName.setPosition(x1, y1).setSize(innerWidth, lineHeight);
+		textFieldName.setPosition(x1, y1 + 1 * h1).setSize(innerWidth, lineHeight);
+		
+		textPosition.setPosition(x1, y1 + 2 * h1).setSize(innerWidth, lineHeight);
+		textX.setPosition(x1, y1 + 3 * h1).setSize(lineHeight, lineHeight);
+		textY.setPosition(x1, y1 + 4 * h1).setSize(lineHeight, lineHeight);
+		textZ.setPosition(x1, y1 + 5 * h1).setSize(lineHeight, lineHeight);
+
+		textFieldPosX.setPosition(x1 + h1, y1 + 3 * h1).setSize(innerWidth - h1, lineHeight);
+		textFieldPosY.setPosition(x1 + h1, y1 + 4 * h1).setSize(innerWidth - h1, lineHeight);
+		textFieldPosZ.setPosition(x1 + h1, y1 + 5 * h1).setSize(innerWidth - h1, lineHeight);
+		
+		navTop.onResize();
+		navBottom.onResize();
+	}
+	
+
+}

@@ -1,13 +1,6 @@
 package b100.minimap.gui;
 
-import b100.minimap.Minimap;
-import b100.minimap.mc.IMinecraftHelper;
-
-public abstract class GuiElement {
-
-	public Minimap minimap = Minimap.instance;
-	public IGuiUtils utils = minimap.guiUtils;
-	public IMinecraftHelper minecraftHelper = minimap.minecraftHelper;
+public abstract class GuiElement extends Gui {
 	
 	public int posX;
 	public int posY;
@@ -20,7 +13,7 @@ public abstract class GuiElement {
 	
 	public abstract void draw(float partialTicks);
 	
-	public void keyEvent(int key, boolean pressed, boolean repeat, int mouseX, int mouseY) {
+	public void keyEvent(int key, char c, boolean pressed, boolean repeat, int mouseX, int mouseY) {
 		
 	}
 	
@@ -37,10 +30,8 @@ public abstract class GuiElement {
 	}
 	
 	public GuiElement setPositionAndSize(int x, int y, int w, int h) {
-		this.posX = x;
-		this.posY = y;
-		this.width = w;
-		this.height = h;
+		setPosition(x, y);
+		setSize(w, h);
 		return this;
 	}
 	

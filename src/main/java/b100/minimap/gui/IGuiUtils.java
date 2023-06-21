@@ -10,6 +10,10 @@ public interface IGuiUtils {
 	
 	public void drawRectangle(int x, int y, int w, int h, int color);
 	
+	public void drawIcon(int icon, int x, int y, int color);
+	
+	public void drawIconWithShadow(int icon, int x, int y, int color);
+	
 	public void playButtonSound();
 	
 	public boolean isGuiOpened();

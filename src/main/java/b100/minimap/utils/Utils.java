@@ -138,5 +138,36 @@ public abstract class Utils {
 		
 		return a << 24 | r << 16 | g << 8 | b;
 	}
+	
+	public static String getValidFileName(String name) {
+		final char seperator = '-';
+		
+		StringBuilder str = new StringBuilder();
+		for(int i=0; i < name.length(); i++) {
+			char c = name.charAt(i);
+			
+			if("ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(c) != -1) {
+				c = (char) (c + 32);
+				str.append(c);
+			}else if("abcdefghijklmnopqrstuvwxyz0123456789".indexOf(c) != -1) {
+				str.append(c);
+			}else {
+				if(str.length() > 0) {
+					if(str.charAt(str.length() - 1) != seperator) {
+						str.append(seperator);	
+					}	
+				}
+			}
+		}
+		
+		if(str.length() > 0 && str.charAt(str.length() - 1) == seperator) {
+			str.deleteCharAt(str.length() - 1);
+		}
+		if(str.length() == 0) {
+			str.append(seperator);
+		}
+		
+		return str.toString();
+	}
 
 }

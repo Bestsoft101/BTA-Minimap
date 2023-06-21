@@ -13,7 +13,7 @@ public class GuiOptionsButtonKeybind extends GuiOptionButton<Integer> {
 	}
 	
 	@Override
-	public void keyEvent(int key, boolean pressed, boolean repeat, int mouseX, int mouseY) {
+	public void keyEvent(int key, char c, boolean pressed, boolean repeat, int mouseX, int mouseY) {
 		if(selected && pressed) {
 			selected = false;
 			if(key != Keyboard.KEY_ESCAPE) {
@@ -23,7 +23,7 @@ public class GuiOptionsButtonKeybind extends GuiOptionButton<Integer> {
 			updateText();
 			throw new CancelEventException();
 		}
-		super.keyEvent(key, pressed, repeat, mouseX, mouseY);
+		super.keyEvent(key, c, pressed, repeat, mouseX, mouseY);
 	}
 	
 	@Override
@@ -38,7 +38,7 @@ public class GuiOptionsButtonKeybind extends GuiOptionButton<Integer> {
 	@Override
 	public int getColor() {
 		if(selected) {
-			return hoverColor;
+			return Colors.buttonBackgroundHover;
 		}else {
 			return super.getColor();
 		}

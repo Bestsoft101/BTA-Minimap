@@ -4,3 +4,8 @@ build/
 out/
 run/
 bin/
+
+# Eclipse
+.classpath
+.settings/
+*.launch

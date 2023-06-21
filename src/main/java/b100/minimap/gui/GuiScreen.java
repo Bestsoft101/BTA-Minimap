@@ -25,7 +25,8 @@ public abstract class GuiScreen extends GuiContainer {
 	}
 	
 	@Override
-	public void keyEvent(int key, boolean pressed, boolean repeat, int mouseX, int mouseY) {
+	public void keyEvent(int key, char c, boolean pressed, boolean repeat, int mouseX, int mouseY) {
+		super.keyEvent(key, c, pressed, repeat, mouseX, mouseY);
 		if(pressed) {
 			if(key == Keyboard.KEY_ESCAPE) {
 				close();
@@ -36,7 +37,6 @@ public abstract class GuiScreen extends GuiContainer {
 				throw new CancelEventException();
 			}	
 		}
-		super.keyEvent(key, pressed, repeat, mouseX, mouseY);
 	}
 	
 	public abstract void onInit();

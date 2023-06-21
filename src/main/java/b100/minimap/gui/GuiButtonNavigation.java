@@ -2,22 +2,29 @@ package b100.minimap.gui;
 
 public class GuiButtonNavigation extends GuiButton {
 
-	private GuiOptionsContainer guiOptionsContainer;
+	private GuiContainerBox container;
 	
-	public GuiButtonNavigation(GuiScreen screen, String string, GuiOptionsContainer container) {
-		super(screen, string);
-		this.guiOptionsContainer = container;
-		
-		setSize(50, 12);
+	public GuiButtonNavigation(GuiScreen screen, String text, GuiContainerBox container) {
+		super(screen, text);
+		this.container = container;
 	}
 	
 	@Override
 	public int getColor() {
 		if(!mouseOver) {
-			return guiOptionsContainer.bgColor;
+			return container.bgColor;
 		}else {
 			return super.getColor();
 		}
 	}
+	
+	@Override
+	public void setText(String text) {
+		super.setText(text);
+		
+		setSize(utils.getStringWidth(text) + 4, 12);
+	}
+	
+	
 
 }

@@ -1,6 +1,7 @@
 package b100.minimap.gui;
 
 import b100.minimap.Minimap;
+import b100.minimap.gui.GuiNavigationContainer.Position;
 
 public class GuiConfigDebug extends GuiScreen {
 	
@@ -8,21 +9,24 @@ public class GuiConfigDebug extends GuiScreen {
 		super(parentScreen);
 	}
 
-	public GuiOptionsContainer guiOptionsContainer;
+	public GuiOptionsContainer options;
+	public GuiNavigationContainer nav;
 	
 	@Override
 	public void onInit() {
 		Minimap.log("Init Gui Config");
 		
-		guiOptionsContainer = add(new GuiOptionsContainer(this));
-		guiOptionsContainer.add("Masking", new GuiOptionButtonBoolean(this, minimap.config.mask));
-		
-		guiOptionsContainer.addNav(new GuiButtonNavigation(this, "Back", guiOptionsContainer).addActionListener((e) -> back()));
+		options = add(new GuiOptionsContainer(this));
+		options.add("Masking", new GuiOptionButtonBoolean(this, minimap.config.mask));
+
+		nav = add(new GuiNavigationContainer(this, options, Position.BOTTOM));
+		nav.add(new GuiButtonNavigation(this, "Back", options).addActionListener((e) -> back()));
 	}
 
 	@Override
 	public void onResize() {
-		guiOptionsContainer.onResize();
+		options.onResize();
+		nav.onResize();
 	}
 	
 }

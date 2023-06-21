@@ -4,6 +4,7 @@ import b100.minimap.Minimap;
 import b100.minimap.config.Config;
 import b100.minimap.config.MapConfig;
 import b100.minimap.config.Option;
+import b100.minimap.gui.GuiNavigationContainer.Position;
 
 public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 	
@@ -11,7 +12,8 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 		super(parentScreen);
 	}
 
-	public GuiOptionsContainer guiOptionsContainer;
+	public GuiOptionsContainer options;
+	public GuiNavigationContainer nav;
 	
 	@Override
 	public void onInit() {
@@ -19,28 +21,31 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 		
 		Config config = minimap.config;
 		
-		guiOptionsContainer = add(new GuiOptionsContainer(this));
-		guiOptionsContainer.add("Map Visible", new GuiOptionButtonBoolean(this, config.mapVisible));
-		guiOptionsContainer.add("Fullscreen Map", new GuiOptionButtonBoolean(this, config.mapConfig.fullscreenMap));
-		guiOptionsContainer.add("Style", new GuiOptionButtonMapStyle(this, config.mapStyle).addOptionListener(this));
-		guiOptionsContainer.add("Round Map", new GuiOptionButtonBoolean(this, config.mapConfig.roundMap).addOptionListener(this));
-		guiOptionsContainer.add("Position", new GuiOptionButtonInteger(this, config.mapConfig.position).setScrollingEnabled(false));
-		guiOptionsContainer.add("Size", new GuiOptionButtonInteger(this, config.mapConfig.width));
-		guiOptionsContainer.add("Shade Type", new GuiOptionButtonInteger(this, config.mapConfig.shadeType).setScrollingEnabled(false).addOptionListener(this));
-		guiOptionsContainer.add("Lighting", new GuiOptionButtonBoolean(this, config.mapConfig.lighting).addOptionListener(this));
-		guiOptionsContainer.add("Update Speed", new GuiOptionButtonInteger(this, config.updateSpeed));
-		guiOptionsContainer.add("Rotate Map", new GuiOptionButtonBoolean(this, config.mapConfig.rotateMap));
-		guiOptionsContainer.add("Frame Opacity", new GuiOptionButtonInteger(this, config.mapConfig.frameOpacity));
-		guiOptionsContainer.add("Require Item", new GuiOptionButtonRequireItem(this, config.requireItem));
-		guiOptionsContainer.add("Debug", new GuiButton(this, "->").addActionListener((e) -> utils.displayGui(new GuiConfigDebug(this))));
+		options = add(new GuiOptionsContainer(this));
+		options.add("Map Visible", new GuiOptionButtonBoolean(this, config.mapVisible));
+		options.add("Fullscreen Map", new GuiOptionButtonBoolean(this, config.mapConfig.fullscreenMap));
+		options.add("Style", new GuiOptionButtonMapStyle(this, config.mapStyle).addOptionListener(this));
+		options.add("Round Map", new GuiOptionButtonBoolean(this, config.mapConfig.roundMap).addOptionListener(this));
+		options.add("Position", new GuiOptionButtonInteger(this, config.mapConfig.position).setScrollingEnabled(false));
+		options.add("Size", new GuiOptionButtonInteger(this, config.mapConfig.width));
+		options.add("Shade Type", new GuiOptionButtonInteger(this, config.mapConfig.shadeType).setScrollingEnabled(false).addOptionListener(this));
+		options.add("Lighting", new GuiOptionButtonBoolean(this, config.mapConfig.lighting).addOptionListener(this));
+		options.add("Update Speed", new GuiOptionButtonInteger(this, config.updateSpeed));
+		options.add("Rotate Map", new GuiOptionButtonBoolean(this, config.mapConfig.rotateMap));
+		options.add("Frame Opacity", new GuiOptionButtonInteger(this, config.mapConfig.frameOpacity));
+		options.add("Require Item", new GuiOptionButtonRequireItem(this, config.requireItem));
+		options.add("Debug", new GuiButton(this, "->").addActionListener((e) -> utils.displayGui(new GuiConfigDebug(this))));
 		
-		guiOptionsContainer.addNav(new GuiButtonNavigation(this, "Close", guiOptionsContainer).addActionListener((e) -> back()));
-		guiOptionsContainer.addNav(new GuiButtonNavigation(this, "Keybinds", guiOptionsContainer).addActionListener((e) -> utils.displayGui(new GuiConfigInput(this))));
+		nav = add(new GuiNavigationContainer(this, options, Position.BOTTOM));
+		nav.add(new GuiButtonNavigation(this, "Close", options).addActionListener((e) -> back()));
+		nav.add(new GuiButtonNavigation(this, "Waypoints", options).addActionListener((e) -> utils.displayGui(new GuiWaypoints(this))));
+		nav.add(new GuiButtonNavigation(this, "Keybinds", options).addActionListener((e) -> utils.displayGui(new GuiConfigInput(this))));
 	}
 
 	@Override
 	public void onResize() {
-		guiOptionsContainer.onResize();
+		options.onResize();
+		nav.onResize();
 	}
 
 	@Override

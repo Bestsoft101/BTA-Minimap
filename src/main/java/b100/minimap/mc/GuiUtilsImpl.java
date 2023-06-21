@@ -1,5 +1,7 @@
 package b100.minimap.mc;
 
+import static org.lwjgl.opengl.GL11.*;
+
 import b100.minimap.gui.GuiScreen;
 import b100.minimap.gui.IGuiUtils;
 import net.minecraft.client.Minecraft;
@@ -15,7 +17,7 @@ public class GuiUtilsImpl implements IGuiUtils {
 	
 	@Override
 	public void drawString(String string, int x, int y, int color) {
-		mc.fontRenderer.drawString(string, x, y, color);
+		mc.fontRenderer.drawStringWithShadow(string, x, y, color);
 	}
 
 	@Override
@@ -66,7 +68,9 @@ public class GuiUtilsImpl implements IGuiUtils {
 	@Override
 	public void displayGui(GuiScreen screen) {
 		if(screen != null) {
-			mc.displayGuiScreen(new GuiWrapper(screen));
+			GuiWrapper wrapper = new GuiWrapper(screen);
+			mc.displayGuiScreen(wrapper);
+			wrapper.onGuiOpened();
 		}else {
 			mc.displayGuiScreen(null);
 		}
@@ -79,6 +83,52 @@ public class GuiUtilsImpl implements IGuiUtils {
 			return guiWrapper.minimapGui;
 		}
 		return null;
+	}
+
+	@Override
+	public void drawIcon(int icon, int x, int y, int color) {
+		glBindTexture(GL_TEXTURE_2D, mc.renderEngine.getTexture("/minimap/gui.png"));
+		
+		int a = color >> 24 & 0xFF;
+		int r = color >> 16 & 0xFF;
+		int g = color >>  8 & 0xFF;
+		int b = color >>  0 & 0xFF;
+		
+		if(a == 0) {
+			a = 255;
+		}
+		
+		int iconX = icon & 3;
+		int iconY = icon >> 2;
+		
+		float u0 = iconX / 4.0f;
+		float v0 = iconY / 4.0f;
+		
+		float u1 = (iconX + 1) / 4.0f;
+		float v1 = (iconY + 1) / 4.0f;
+		
+		int x1 = x + 8;
+		int y1 = y + 8;
+		
+		Tessellator tessellator = Tessellator.instance;
+		tessellator.startDrawingQuads();
+		tessellator.setColorRGBA(r, g, b, a);
+		tessellator.addVertexWithUV(x, y, 0, u0, v0);
+		tessellator.addVertexWithUV(x, y1, 0, u0, v1);
+		tessellator.addVertexWithUV(x1, y1, 0, u1, v1);
+		tessellator.addVertexWithUV(x1, y, 0, u1, v0);
+		tessellator.draw();
+	}
+
+	@Override
+	public void drawIconWithShadow(int icon, int x, int y, int color) {
+		int shadowColor = color;
+        int alphaChannelOnly = shadowColor & 0xFF000000;
+        shadowColor = (shadowColor & 0xFCFCFC) >> 2;
+        shadowColor += alphaChannelOnly;
+        
+        drawIcon(icon, x + 1, y + 1, shadowColor);
+        drawIcon(icon, x, y, color);
 	}
 
 }

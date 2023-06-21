@@ -9,10 +9,9 @@ public class GuiButton extends GuiElement {
 
 	public GuiScreen screen;
 	public String text;
+	public int icon = -1;
 
-	public int bgColor = 0xbb505050;
-	public int hoverColor = 0xcc808080;
-	public int textColor = 0xffffff;
+	public boolean clickable = true;
 	
 	public boolean mouseOver = false;
 	
@@ -20,7 +19,12 @@ public class GuiButton extends GuiElement {
 	
 	public GuiButton(GuiScreen screen, String text) {
 		this(screen);
-		this.text = text;
+		setText(text);
+	}
+	
+	public GuiButton(GuiScreen screen, int icon) {
+		this(screen);
+		this.icon = icon;
 	}
 	
 	public GuiButton(GuiScreen screen) {
@@ -36,19 +40,31 @@ public class GuiButton extends GuiElement {
 		glDisable(GL_TEXTURE_2D);
 		utils.drawRectangle(posX, posY, width, height, getColor());
 		
-		glEnable(GL_TEXTURE_2D);
-		utils.drawCenteredString(text, posX + width / 2, posY + height / 2 - 4, textColor);
+		if(text != null) {
+			glEnable(GL_TEXTURE_2D);
+			utils.drawCenteredString(text, posX + width / 2, posY + height / 2 - 4, getTextColor());	
+		}
+		if(icon >= 0) {
+			glEnable(GL_TEXTURE_2D);
+			utils.drawIconWithShadow(icon, posX + width / 2 - 4, posY + height / 2 - 4, getTextColor());
+		}
 	}
 	
 	public int getColor() {
-		return mouseOver ? hoverColor : bgColor;
+		return clickable && mouseOver ? Colors.buttonBackgroundHover : Colors.buttonBackground;
+	}
+	
+	public int getTextColor() {
+		return clickable ? Colors.buttonTextClickable : Colors.buttonTextNotClickable;
 	}
 
 	@Override
 	public void mouseEvent(int button, boolean pressed, int mouseX, int mouseY) {
 		if(screen.getClickElementAt(mouseX, mouseY) == this && pressed) {
-			utils.playButtonSound();
-			onClick(button);
+			if(clickable) {
+				utils.playButtonSound();
+				onClick(button);	
+			}
 			throw new CancelEventException();
 		}
 	}
@@ -69,6 +85,10 @@ public class GuiButton extends GuiElement {
 	public GuiButton removeActionListener(ActionListener actionListener) {
 		this.actionListeners.remove(actionListener);
 		return this;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
 	}
 
 }

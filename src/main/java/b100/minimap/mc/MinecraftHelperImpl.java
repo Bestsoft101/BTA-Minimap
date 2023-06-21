@@ -3,11 +3,14 @@ package b100.minimap.mc;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
+import b100.utils.ReflectUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.ChatAllowedCharacters;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.GLAllocation;
@@ -15,8 +18,12 @@ import net.minecraft.src.GuiChat;
 import net.minecraft.src.IWorldAccess;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.NetClientHandler;
+import net.minecraft.src.NetworkManager;
+import net.minecraft.src.SaveHandler;
 import net.minecraft.src.TexturePackBase;
 import net.minecraft.src.World;
+import net.minecraft.src.WorldClient;
 import net.minecraft.src.helper.Buffer;
 
 public class MinecraftHelperImpl implements IMinecraftHelper {
@@ -136,6 +143,33 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	@Override
 	public boolean isDebugScreenOpened() {
 		return mc.gameSettings.showDebugScreen.value;
+	}
+
+	@Override
+	public boolean isMultiplayer(World world) {
+		return world instanceof WorldClient;
+	}
+
+	@Override
+	public String getWorldDirectoryName(World world) {
+		SaveHandler saveHandler = (SaveHandler) world.getSaveHandler();
+		File saveDirectory = ReflectUtils.getValue(ReflectUtils.getField(SaveHandler.class, "saveDirectory"), saveHandler, File.class);
+		return saveDirectory.getName();
+	}
+
+	@Override
+	public String getServerName(World world) {
+		WorldClient worldClient = (WorldClient) world;
+		NetClientHandler sendQueue = ReflectUtils.getValue(ReflectUtils.getField(WorldClient.class, "sendQueue"), worldClient, NetClientHandler.class);
+		NetworkManager netManager = ReflectUtils.getValue(ReflectUtils.getField(NetClientHandler.class, "netManager"), sendQueue, NetworkManager.class);
+		Socket socket = ReflectUtils.getValue(ReflectUtils.getField(NetworkManager.class, "networkSocket"), netManager, Socket.class);
+		
+		return socket.getInetAddress().getHostName() + ":" + socket.getPort();
+	}
+
+	@Override
+	public boolean isCharacterAllowed(char c) {
+		return ChatAllowedCharacters.allowedCharacters.indexOf(c) != -1;
 	}
 
 }

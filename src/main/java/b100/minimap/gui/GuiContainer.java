@@ -3,7 +3,7 @@ package b100.minimap.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GuiContainer extends GuiElement {
+public class GuiContainer extends GuiElement {
 	
 	public List<GuiElement> elements = new ArrayList<>();
 	
@@ -24,9 +24,9 @@ public abstract class GuiContainer extends GuiElement {
 	}
 	
 	@Override
-	public void keyEvent(int key, boolean pressed, boolean repeat, int mouseX, int mouseY) {
+	public void keyEvent(int key, char c, boolean pressed, boolean repeat, int mouseX, int mouseY) {
 		for(int i=0; i < elements.size(); i++) {
-			elements.get(i).keyEvent(key, pressed, repeat, mouseX, mouseY);
+			elements.get(i).keyEvent(key, c, pressed, repeat, mouseX, mouseY);
 		}
 	}
 	

@@ -9,6 +9,8 @@ import org.lwjgl.input.Keyboard;
 import b100.minimap.config.Config;
 import b100.minimap.config.Keybind;
 import b100.minimap.config.MapConfig;
+import b100.minimap.data.WorldData;
+import b100.minimap.data.WorldDataManager;
 import b100.minimap.gui.GuiConfigGeneral;
 import b100.minimap.gui.GuiScreen;
 import b100.minimap.gui.IGuiUtils;
@@ -43,6 +45,8 @@ public class Minimap {
 	public BlockRenderManager blockRenderManager;
 	public TileColors tileColors;
 	public IGuiUtils guiUtils;
+	public WorldDataManager worldDataManager;
+	public WorldData worldData;
 	
 	private Minimap() {
 		if(mc == null)
@@ -54,12 +58,11 @@ public class Minimap {
 		worldAccess = new WorldAccess(mapRender);
 		config = new Config();
 		loadConfig();
-		
+		worldDataManager = new WorldDataManager(this);
 		tileColors = new TileColors(this);
 		tileColors.createTileColors();
 		blockRenderManager = new BlockRenderManager(tileColors);
 		guiUtils = new GuiUtilsImpl(mc);
-		
 		updateStyle();
 	}
 	
@@ -139,6 +142,19 @@ public class Minimap {
 		
 		GuiScreen screen = guiUtils.getCurrentScreen();
 		if(screen != null) {
+			if(!screen.isInitialized()) {
+				screen.init();
+			}
+
+			int w = mc.resolution.scaledWidth;
+			int h = mc.resolution.scaledHeight;
+			
+			if(w != screen.width || h != screen.height) {
+				screen.width = w;
+				screen.height = h;
+				screen.onResize();
+			}
+			
 			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_TEXTURE_2D);
 			glEnable(GL_BLEND);
@@ -192,14 +208,19 @@ public class Minimap {
 		if(theWorld != null) {
 			minecraftHelper.addWorldAccess(theWorld, worldAccess);
 			
+			this.worldData = worldDataManager.getWorldData(theWorld);
+			log("World Data Directory: " + this.worldData.file.getAbsolutePath());
+			
 			mapRender.onWorldChange(newWorld);
+		}else {
+			this.worldData = null;
 		}
 		
 		saveConfig();
 	}
 	
 	public static void log(String str) {
-		System.out.println("[MINIMAP] " + str);
+		System.out.print("[MINIMAP] " + str + "\n");
 	}
 	
 }
