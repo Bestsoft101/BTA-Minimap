@@ -43,7 +43,7 @@ public class GuiTextField extends GuiElement {
 		if(pressed) {
 			if(screen.getClickElementAt(mouseX, mouseY) == this) {
 				if(button == 1) {
-					textComponent.setString("");
+					textComponent.setText("");
 				}
 				textComponent.setFocused(true);	
 			}else {
@@ -54,6 +54,10 @@ public class GuiTextField extends GuiElement {
 	
 	public int getBackgroundColor() {
 		return textComponent.focused ? Colors.buttonBackgroundHover : Colors.buttonBackground;
+	}
+	
+	public String getText() {
+		return textComponent.text;
 	}
 
 }

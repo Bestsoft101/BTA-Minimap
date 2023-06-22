@@ -63,10 +63,14 @@ public class GuiWrapper extends net.minecraft.src.GuiScreen {
 	@Override
 	public void onGuiClosed() {
 		Keyboard.enableRepeatEvents(false);
+		
+		minimapGui.onGuiClosed();
 	}
 	
 	public void onGuiOpened() {
-		Keyboard.enableRepeatEvents(true);	
+		Keyboard.enableRepeatEvents(true);
+		
+		minimapGui.onGuiOpened();
 	}
 	
 }

@@ -1,14 +1,21 @@
-package b100.minimap.gui;
-
-import java.util.Random;
+package b100.minimap.gui.waypoint;
 
 import b100.minimap.Minimap;
+import b100.minimap.gui.GuiButtonNavigation;
+import b100.minimap.gui.GuiContainerBox;
+import b100.minimap.gui.GuiNavigationContainer;
 import b100.minimap.gui.GuiNavigationContainer.Position;
+import b100.minimap.gui.GuiScreen;
+import b100.minimap.gui.GuiTextComponent;
+import b100.minimap.gui.GuiTextComponentInteger;
+import b100.minimap.gui.GuiTextElement;
+import b100.minimap.gui.GuiTextField;
+import b100.minimap.gui.TextComponentListener;
 import b100.minimap.waypoint.Waypoint;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.MathHelper;
 
-public class GuiEditWaypoint extends GuiScreen {
+public abstract class GuiEditWaypointBase extends GuiScreen implements TextComponentListener {
 	
 	public String title;
 	
@@ -38,27 +45,15 @@ public class GuiEditWaypoint extends GuiScreen {
 	public int playerOffsetY;
 	public int playerOffsetZ;
 	
-	public GuiEditWaypoint(GuiScreen parentScreen) {
+	public GuiEditWaypointBase(GuiScreen parentScreen) {
 		super(parentScreen);
+		
 		setPlayerOffset();
-		
-		String name = "";
-		int color = new Random().nextInt() & 0xFFFFFF;
-		
-		this.waypoint = new Waypoint(name, playerOffsetX, playerOffsetY, playerOffsetZ, color);
-		this.title = "Create Waypoint";
-	}
-
-	public GuiEditWaypoint(GuiScreen parentScreen, Waypoint waypoint) {
-		super(parentScreen);
-		setPlayerOffset();
-		
-		this.waypoint = waypoint;
-		this.title = "Edit Waypoint";
 	}
 	
-	private void setPlayerOffset() {
+	public void setPlayerOffset() {
 		EntityPlayer player = Minimap.instance.minecraftHelper.getThePlayer();
+		
 		this.playerOffsetX = MathHelper.floor_double(player.posX);
 		this.playerOffsetY = MathHelper.floor_double(player.posY);
 		this.playerOffsetZ = MathHelper.floor_double(player.posZ);
@@ -72,7 +67,8 @@ public class GuiEditWaypoint extends GuiScreen {
 		this.navBottom = add(new GuiNavigationContainer(this, container, Position.BOTTOM));
 		
 		this.navTop.add(new GuiButtonNavigation(this, title, container));
-		this.navBottom.add(new GuiButtonNavigation(this, "Done", container).addActionListener((e) -> back()));
+		this.navBottom.add(new GuiButtonNavigation(this, "Cancel", container).addActionListener((e) -> cancel()));
+		this.navBottom.add(new GuiButtonNavigation(this, "OK", container).addActionListener((e) -> ok()));
 		
 		this.textComponentX = new GuiTextComponentInteger(waypoint.x - playerOffsetX);
 		this.textComponentY = new GuiTextComponentInteger(waypoint.y - playerOffsetY);
@@ -82,21 +78,31 @@ public class GuiEditWaypoint extends GuiScreen {
 		this.textFieldPosX = container.add(new GuiTextField(this, textComponentX));
 		this.textFieldPosY = container.add(new GuiTextField(this, textComponentY));
 		this.textFieldPosZ = container.add(new GuiTextField(this, textComponentZ));
-
+		
 		this.textName = add(new GuiTextElement("Name"));
 		this.textPosition = add(new GuiTextElement("Offset"));
 		this.textX = add(new GuiTextElement("x"));
 		this.textY = add(new GuiTextElement("y"));
 		this.textZ = add(new GuiTextElement("z"));
+		
+		this.textFieldName.textComponent.addTextComponentListener(this);
+		this.textFieldPosX.textComponent.addTextComponentListener(this);
+		this.textFieldPosY.textComponent.addTextComponentListener(this);
+		this.textFieldPosZ.textComponent.addTextComponentListener(this);
+		
+		this.textFieldName.textComponent.setFocused(true);
 	}
 	
 	@Override
 	public void onResize() {
 		final int paddingOuter = 2;
 		final int paddingInner = 1;
+
+		final int lineHeight = 10;
+		final int h1 = lineHeight + paddingInner;
 		
 		int w = 150;
-		int h = 100;
+		int h = 6 * lineHeight + 5 * paddingInner + 2 * paddingOuter;
 		
 		container.setSize(w, h);
 		container.setPosition((this.width - w) / 2, (this.height - h) / 2);
@@ -105,9 +111,6 @@ public class GuiEditWaypoint extends GuiScreen {
 		
 		int x1 = container.posX + paddingOuter;
 		int y1 = container.posY + paddingOuter;
-		
-		int lineHeight = 10;
-		int h1 = lineHeight + paddingInner;
 		
 		textName.setPosition(x1, y1).setSize(innerWidth, lineHeight);
 		textFieldName.setPosition(x1, y1 + 1 * h1).setSize(innerWidth, lineHeight);
@@ -124,6 +127,18 @@ public class GuiEditWaypoint extends GuiScreen {
 		navTop.onResize();
 		navBottom.onResize();
 	}
+	
+	@Override
+	public void onTextComponentChanged(GuiTextComponent textComponent) {
+		this.waypoint.name = this.textFieldName.getText();
+		this.waypoint.x = this.textComponentX.getValue() + playerOffsetX;
+		this.waypoint.y = this.textComponentY.getValue() + playerOffsetY;
+		this.waypoint.z = this.textComponentZ.getValue() + playerOffsetZ;
+	}
+	
+	public abstract void ok();
+	
+	public abstract void cancel();
 	
 
 }

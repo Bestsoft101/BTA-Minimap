@@ -19,7 +19,13 @@ public abstract class GuiScreen extends GuiContainer {
 	}
 	
 	public final void init() {
+		elements.clear();
+		
 		onInit();
+		
+		if(initialized) {
+			onResize();
+		}
 		
 		initialized = true;
 	}
@@ -55,6 +61,14 @@ public abstract class GuiScreen extends GuiContainer {
 	
 	public void close() {
 		utils.displayGui(null);
+	}
+	
+	public void onGuiOpened() {
+		
+	}
+	
+	public void onGuiClosed() {
+		
 	}
 
 }

@@ -49,7 +49,7 @@ public class GuiScrollableContainer extends GuiContainerBox {
 	public void update() {
 		this.needsUpdate = false;
 
-		int maxScrollLevel = scrollableElements.size() - elementsPerPage;
+		int maxScrollLevel = Math.max(0, scrollableElements.size() - elementsPerPage);
 		this.scrollLevel = Utils.clamp(scrollLevel, 0, maxScrollLevel);
 		
 		this.buttonScrollUp.clickable = scrollLevel > 0;

@@ -5,6 +5,7 @@ import b100.minimap.config.Config;
 import b100.minimap.config.MapConfig;
 import b100.minimap.config.Option;
 import b100.minimap.gui.GuiNavigationContainer.Position;
+import b100.minimap.gui.waypoint.GuiWaypoints;
 
 public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 	

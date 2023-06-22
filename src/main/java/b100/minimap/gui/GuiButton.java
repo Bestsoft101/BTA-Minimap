@@ -55,7 +55,7 @@ public class GuiButton extends GuiElement {
 	}
 	
 	public int getTextColor() {
-		return clickable ? Colors.buttonTextClickable : Colors.buttonTextNotClickable;
+		return clickable ? Colors.buttonText : Colors.buttonTextDeactivated;
 	}
 
 	@Override

@@ -209,7 +209,8 @@ public class Minimap {
 			minecraftHelper.addWorldAccess(theWorld, worldAccess);
 			
 			this.worldData = worldDataManager.getWorldData(theWorld);
-			log("World Data Directory: " + this.worldData.file.getAbsolutePath());
+			this.worldData.load();
+			log("World Data Directory: " + this.worldData.directory.getAbsolutePath());
 			
 			mapRender.onWorldChange(newWorld);
 		}else {

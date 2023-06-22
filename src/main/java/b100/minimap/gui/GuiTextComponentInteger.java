@@ -12,12 +12,12 @@ public class GuiTextComponentInteger extends GuiTextComponent {
 	}
 	
 	public void setValue(int value) {
-		setString(String.valueOf(value));
+		setText(String.valueOf(value));
 	}
 	
 	public int getValue() {
 		try{
-			return Integer.parseInt(string);
+			return Integer.parseInt(text);
 		}catch (Exception e) {
 			return 0;
 		}

@@ -172,4 +172,9 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 		return ChatAllowedCharacters.allowedCharacters.indexOf(c) != -1;
 	}
 
+	@Override
+	public float getScreenPaddingPercentage() {
+		return mc.gameSettings.screenPadding.value * 0.125f;
+	}
+
 }

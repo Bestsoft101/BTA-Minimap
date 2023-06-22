@@ -56,4 +56,6 @@ public interface IMinecraftHelper {
 	
 	public boolean isCharacterAllowed(char c);
 	
+	public float getScreenPaddingPercentage();
+	
 }
