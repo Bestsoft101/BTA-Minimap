@@ -10,4 +10,6 @@ public interface MapStyle {
 	
 	public boolean isRound();
 	
+	public boolean useLinearFiltering();
+	
 }

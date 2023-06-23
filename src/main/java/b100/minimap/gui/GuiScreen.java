@@ -47,10 +47,6 @@ public abstract class GuiScreen extends GuiContainer {
 	
 	public abstract void onInit();
 	
-	public void onResize() {
-		
-	}
-	
 	public boolean isInitialized() {
 		return initialized;
 	}

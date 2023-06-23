@@ -40,6 +40,9 @@ public class MapRender implements IWorldListener {
 	private ByteBuffer colorBuffer = ByteBuffer.allocateDirect(16 * 16 * 4).order(ByteOrder.nativeOrder());
 	private IntBuffer colorBufferInt = colorBuffer.asIntBuffer();
 	
+	///////////////////////////////
+	
+	public Tessellator tessellator;
 	public MapConfig mapConfig;
 	
 	public int viewRadius = 16;
@@ -51,17 +54,22 @@ public class MapRender implements IWorldListener {
 	public int playerBlockX;
 	public int playerBlockZ;
 	
-	public double mapRotation;
+	public double playerRotation;
 	
 	public int playerChunkX;
 	public int playerChunkZ;
 	
 	public int zoom;
 	
-	public int mapX;
-	public int mapY;
+	public int mapPosX;
+	public int mapPosY;
 	public int mapWidth;
 	public int mapHeight;
+	public int mapCenterX;
+	public int mapCenterY;
+	
+	public int tileSize;
+	public int iconSize = 16;
 	
 	public MapRender(Minimap minimap) {
 		this.minimap = minimap;
@@ -86,8 +94,8 @@ public class MapRender implements IWorldListener {
 	}
 	
 	public void setStyle(MapStyle style) {
-		setTextureImage(mapTexture, style.getMapTexture(), true, false);
-		setTextureImage(maskTexture, style.getMaskTexture(), true, false);
+		setTextureImage(mapTexture, style.getMapTexture(), style.useLinearFiltering(), false);
+		setTextureImage(maskTexture, style.getMaskTexture(), style.useLinearFiltering(), false);
 	}
 	
 	public void renderMap(float partialTicks) {
@@ -115,9 +123,11 @@ public class MapRender implements IWorldListener {
 		playerChunkX = MathHelper.floor_double(playerPosX) >> 4;
 		playerChunkZ = MathHelper.floor_double(playerPosZ) >> 4;
 		
-		mapRotation = player.rotationYaw;
+		playerRotation = player.rotationYaw;
 		
 		mapConfig = minimap.config.mapConfig;
+
+		viewRadius = 16;
 		
 		updateChunks();
 		
@@ -130,7 +140,7 @@ public class MapRender implements IWorldListener {
 	}
 	
 	private void drawMapOnScreen() {
-		Tessellator tessellator = Tessellator.instance;
+		tessellator = Tessellator.instance;
 
 		int displayWidth = minimap.minecraftHelper.getDisplayWidth();
 		int displayHeight = minimap.minecraftHelper.getDisplayHeight();
@@ -138,34 +148,34 @@ public class MapRender implements IWorldListener {
 		mapWidth = mapConfig.width.value * 16;
 		mapHeight = mapConfig.width.value * 16;
 		
-		final int pad = (int) (displayHeight * minimap.minecraftHelper.getScreenPaddingPercentage());
+		final int pad = iconSize;
 		
 		if(mapConfig.fullscreenMap.value) {
 			mapWidth = mapHeight = Math.min(displayWidth - pad * 2, displayHeight - pad * 2);
 			zoom = (int) Math.pow(2, mapConfig.fullscreenZoomLevel.value);
-			mapX = (displayWidth - mapWidth) / 2;
-			mapY = (displayHeight - mapHeight) / 2;
+			mapPosX = (displayWidth - mapWidth) / 2;
+			mapPosY = (displayHeight - mapHeight) / 2;
 		}else {
 			zoom = (int) Math.pow(2, mapConfig.zoomLevel.value);
 			
 			if(mapConfig.position.value == 1 || mapConfig.position.value == 3) {
-				mapX = displayWidth - mapWidth - pad;
+				mapPosX = displayWidth - mapWidth - pad;
 			}else {
-				mapX = pad;
+				mapPosX = pad;
 			}
 			if(mapConfig.position.value == 2 || mapConfig.position.value == 3) {
-				mapY = displayHeight - mapHeight - pad;
+				mapPosY = displayHeight - mapHeight - pad;
 			}else {
-				mapY = pad;
+				mapPosY = pad;
 			}
 		}
 		
-		int mapCenterX = mapX + mapWidth / 2;
-		int mapCenterY = mapY + mapHeight / 2;
+		mapCenterX = mapPosX + mapWidth / 2;
+		mapCenterY = mapPosY + mapHeight / 2;
 		
-		int tileSize = 16 * zoom;
-		
-		/////////////////////////////
+		tileSize = 16 * zoom;
+
+		///////////////////////////////
 		
 		glEnable(GL_BLEND);
 		glBlendFunc(770, 771);
@@ -183,7 +193,7 @@ public class MapRender implements IWorldListener {
 			renderHelper.drawRectangle(tessellator, 0, 0, displayWidth, displayHeight, 0, 0, 0, 0, 32);
 			
 			tessellator.setColorOpaque_F(0.0f, 0.0f, 1.0f);
-			renderHelper.drawRectangle(tessellator, mapX, mapY, mapWidth, mapHeight, 0, 0, 1, 1, -32);
+			renderHelper.drawRectangle(tessellator, mapPosX, mapPosY, mapWidth, mapHeight, 0, 0, 1, 1, -32);
 			tessellator.draw();
 			
 			glDepthFunc(GL_LEQUAL);
@@ -192,7 +202,7 @@ public class MapRender implements IWorldListener {
 
 			tessellator.startDrawingQuads();
 			tessellator.setColorOpaque_F(0.0f, 1.0f, 0.0f);
-			renderHelper.drawRectangle(tessellator, mapX, mapY, mapWidth, mapHeight, 0, 0, 1, 1, 64);
+			renderHelper.drawRectangle(tessellator, mapPosX, mapPosY, mapWidth, mapHeight, 0, 0, 1, 1, 64);
 			tessellator.draw();
 			
 			glColorMask(true, true, true, true);
@@ -201,18 +211,58 @@ public class MapRender implements IWorldListener {
 		glDisable(GL_TEXTURE_2D);
 		glColor4d(0.1, 0.1, 0.1, 0.9);
 		tessellator.startDrawingQuads();
-		renderHelper.drawRectangle(tessellator, mapX, mapY, mapWidth, mapHeight, 0, 0, 0, 0, 0);
+		renderHelper.drawRectangle(tessellator, mapPosX, mapPosY, mapWidth, mapHeight, 0, 0, 0, 0, 0);
 		tessellator.draw();
-		
 		
 		glPushMatrix();
 		glTranslated(mapCenterX, mapCenterY, 0);
 		
-		if(minimap.config.mapConfig.rotateMap.value) {
+		boolean rotate = minimap.config.mapConfig.rotateMap.value; 
+		if(rotate) {
 			glPushMatrix();
-			glRotated(-mapRotation + 180.0f, 0, 0, 1);
+			glRotated(-playerRotation + 180.0f, 0, 0, 1);
 		}
 		
+		renderMapTiles();
+		
+		if(rotate) {
+			glPopMatrix();
+		}
+		
+		glPopMatrix();
+
+		float frameOpacity = minimap.config.mapConfig.frameOpacity.value / 100.0f;
+		if(frameOpacity > 0.0f) {
+			glDisable(GL_ALPHA_TEST);
+			glBindTexture(GL_TEXTURE_2D, mapTexture);
+			glColor4f(1.0f, 1.0f, 1.0f, frameOpacity);
+			tessellator.startDrawingQuads();
+			renderHelper.drawRectangle(tessellator, mapPosX, mapPosY, mapWidth, mapHeight, 0.0f, 0.0f, 1.0f, 1.0f, 64);
+			tessellator.draw();
+			glEnable(GL_ALPHA_TEST);
+		}
+
+		glDisable(GL_DEPTH_TEST);
+
+		renderWaypoints();
+		renderPlayerArrow();
+		
+		if(minimap.config.showTiles.value) {
+			glBindTexture(GL_TEXTURE_2D, mapTileManager.texture);
+			glDisable(GL_TEXTURE_2D);
+			glColor3d(0.0, 0.0,0.0);
+			tessellator.startDrawingQuads();
+			renderHelper.drawRectangle(tessellator, 0, 0, 512, 512, 0.0f, 0.0f, 1.0f, 1.0f, 0);
+			tessellator.draw();	
+			glEnable(GL_TEXTURE_2D);
+			glColor3d(1.0, 1.0, 1.0);
+			tessellator.startDrawingQuads();
+			renderHelper.drawRectangle(tessellator, 0, 0, 512, 512, 0.0f, 0.0f, 1.0f, 1.0f, 0);
+			tessellator.draw();	
+		}
+	}
+	
+	public void renderMapTiles() {
 		glColor3d(1.0, 1.0, 1.0);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, mapTileManager.texture);
@@ -248,7 +298,12 @@ public class MapRender implements IWorldListener {
 			int x0 = mapChunk.getPosX() * 16 * zoom - (int) (playerPosX * zoom);
 			int z0 = mapChunk.getPosZ() * 16 * zoom - (int) (playerPosZ * zoom);
 			
-			if(x0 < wh && z0 < hh && x0 + tileSize > -wh && z0 + tileSize > -hh) {
+			int extend = 0;
+			if(mapConfig.rotateMap.value && !mapConfig.roundMap.value) {
+				extend = 48;
+			}
+			
+			if(x0 < wh + extend && z0 < hh + extend && x0 + tileSize > -wh - extend && z0 + tileSize > -hh - extend) {
 				int x1 = (int) x0;
 				int y1 = (int) z0;
 				
@@ -259,57 +314,29 @@ public class MapRender implements IWorldListener {
 		if(startedDrawing) {
 			tessellator.draw();
 		}
-		
-		if(minimap.config.mapConfig.rotateMap.value) {
-			glPopMatrix();
-		}
-		
+	}
+	
+	public void renderPlayerArrow() {
 		int tex = minimap.minecraftHelper.getTexture("%blur%/player_arrow.png");
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, tex);
-		
 		glColor3d(1.0, 0.0, 0.0);
-
-		if(!minimap.config.mapConfig.rotateMap.value) {
-			glRotated(mapRotation + 180.0f, 0, 0, 1);
+		
+		Double angle = null;
+		if(!mapConfig.rotateMap.value) {
+			angle = Math.toRadians(-playerRotation - 90);
 		}
 		
 		tessellator.startDrawingQuads();
-		renderHelper.drawRectangle(tessellator, -8, -8, 16, 16, 0, 0, 1, 1, 80);
+		renderHelper.drawIcon(tessellator, mapCenterX, mapCenterY, iconSize, 0, angle);
 		tessellator.draw();
-		
-		glPopMatrix();
-
-		float frameOpacity = minimap.config.mapConfig.frameOpacity.value / 100.0f;
-		if(frameOpacity > 0.0f) {
-			glDisable(GL_ALPHA_TEST);
-			glBindTexture(GL_TEXTURE_2D, mapTexture);
-			glColor4f(1.0f, 1.0f, 1.0f, frameOpacity);
-			tessellator.startDrawingQuads();
-			renderHelper.drawRectangle(tessellator, mapX, mapY, mapWidth, mapHeight, 0.0f, 0.0f, 1.0f, 1.0f, 64);
-			tessellator.draw();
-			glEnable(GL_ALPHA_TEST);
-		}
-
-		glDisable(GL_DEPTH_TEST);
-		
-		renderWaypoints(mapCenterX, mapCenterY);
-		
-		
-//		glBindTexture(GL_TEXTURE_2D, mapTileManager.texture);
-//		glDisable(GL_TEXTURE_2D);
-//		glColor3d(0.0, 0.0, 0.0);
-//		tessellator.startDrawingQuads();
-//		renderHelper.drawRectangle(tessellator, 1, 1, 514, 514, 0.0f, 0.0f, 1.0f, 1.0f, 0);
-//		tessellator.draw();
-//		glEnable(GL_TEXTURE_2D);
-//		glColor3d(1.0, 1.0, 1.0);
-//		tessellator.startDrawingQuads();
-//		renderHelper.drawRectangle(tessellator, 2, 2, 512, 512, 0.0f, 0.0f, 1.0f, 1.0f, 0);
-//		tessellator.draw();
 	}
 	
-	public void renderWaypoints(int mapCenterX, int mapCenterY) {
+	public void renderWaypoints() {
+		if(!mapConfig.showWaypoints.value) {
+			return;
+		}
+		
 		List<Waypoint> waypoints = Minimap.instance.worldData.waypoints;
 		if(waypoints.size() == 0) {
 			return;
@@ -321,21 +348,24 @@ public class MapRender implements IWorldListener {
 		glBindTexture(GL_TEXTURE_2D, waypointTex);
 		int currentTex = waypointTex;
 		
-		Tessellator tessellator = Tessellator.instance;
-		
 		for(int i=0; i < waypoints.size(); i++) {
 			Waypoint waypoint = waypoints.get(i);
 			if(!waypoint.visible) {
 				continue;
 			}
 			
+			// Casted to int match map exactly
 			double offsetX = waypoint.x * zoom - (int) (playerPosX * zoom);
 			double offsetZ = waypoint.z * zoom - (int) (playerPosZ * zoom);
+			
+			// Used to render way
+			double offsetXSmooth = waypoint.x - playerPosX;
+			double offsetZSmooth = waypoint.z - playerPosZ;
 			
 			Double angle = null;
 			
 			if(mapConfig.rotateMap.value) {
-				double rot = Math.toRadians(mapRotation - 90);
+				double rot = Math.toRadians(playerRotation - 90);
 				
 				double sin = Math.sin(rot);
 				double cos = Math.cos(rot);
@@ -345,6 +375,12 @@ public class MapRender implements IWorldListener {
 				
 				offsetX = p0xNew;
 				offsetZ = p0yNew;
+				
+				p0xNew = offsetXSmooth * sin - offsetZSmooth * cos;
+				p0yNew = offsetXSmooth * cos + offsetZSmooth * sin;
+				
+				offsetXSmooth = p0xNew;
+				offsetZSmooth = p0yNew;
 			}
 			
 			double x = mapCenterX + offsetX;
@@ -357,25 +393,37 @@ public class MapRender implements IWorldListener {
 				double dx = x - mapCenterX;
 				double dy = y - mapCenterY;
 				double rad = (mapWidth - border) / 2;
-				double rad2 = (mapWidth + border) / 2;
+				double rad2 = (mapWidth + iconSize / 2) / 2;
 				
 				double distance = Math.sqrt(dx * dx + dy * dy); 
 				isOnMap = distance < rad;
 				
 				if(!isOnMap) {
-					double x1 = x - mapCenterX;
-					double y1 = y - mapCenterY;
+					distance = Math.sqrt(offsetXSmooth * offsetXSmooth + offsetZSmooth * offsetZSmooth);
 					
-					x1 = (x1 / distance) * rad2;
-					y1 = (y1 / distance) * rad2;
+					offsetXSmooth = (offsetXSmooth / distance) * rad2;
+					offsetZSmooth = (offsetZSmooth / distance) * rad2;
 					
-					x = (int) x1 + mapCenterX;
-					y = (int) y1 + mapCenterY;
+					x = offsetXSmooth + mapCenterX;
+					y = offsetZSmooth + mapCenterY;
 				}
 			}else {
-				isOnMap = x >= mapX + border && y >= mapY + border && x < mapX + mapWidth - border && y < mapY + mapHeight - border;
+				isOnMap = x >= mapPosX + border && y >= mapPosY + border && x < mapPosX + mapWidth - border && y < mapPosY + mapHeight - border;
+//				isOnMap = true;
 				
 				
+				if(!isOnMap) {
+					double offXAbs = Math.abs(offsetXSmooth);
+					double offZAbs = Math.abs(offsetZSmooth);
+					
+					if(offZAbs > offXAbs) {
+						x = (offsetXSmooth / offZAbs) * (mapWidth / 2) + mapCenterX;
+						y = (offsetZSmooth / offZAbs) * (mapWidth / 2) + mapCenterY;
+					}else {
+						x = (offsetXSmooth / offXAbs) * (mapWidth / 2) + mapCenterX;
+						y = (offsetZSmooth / offXAbs) * (mapWidth / 2) + mapCenterY;
+					}
+				}
 			}
 			
 			if(isOnMap) {
@@ -384,10 +432,7 @@ public class MapRender implements IWorldListener {
 					currentTex = waypointTex;
 				}
 			}else {
-				angle = Math.atan2(playerBlockZ - waypoint.z, waypoint.x - playerBlockX);
-				if(mapConfig.rotateMap.value) {
-					angle += Math.toRadians(mapRotation + 180);
-				}
+				angle = Math.atan2(-offsetZSmooth, offsetXSmooth);
 				if(currentTex != waypointArrowTex) {
 					glBindTexture(GL_TEXTURE_2D, waypointArrowTex);
 					currentTex = waypointArrowTex;
@@ -396,13 +441,7 @@ public class MapRender implements IWorldListener {
 			
 			tessellator.startDrawingQuads();
 			tessellator.setColorOpaque_I(waypoint.color);
-			
-			if(angle != null) {
-				renderHelper.drawRotatedRectangle(tessellator, x - 8, y - 8, 16, 16, 0.0f, 0.0f, 1.0f, 1.0f, 0, angle);
-			}else {
-				renderHelper.drawRectangle(tessellator, x - 8, y - 8, 16, 16, 0.0f, 0.0f, 1.0f, 1.0f, 64);
-			}
-			
+			renderHelper.drawIcon(tessellator, x, y, iconSize, 0, angle);
 			tessellator.draw();
 		}
 	}

@@ -9,3 +9,5 @@ bin/
 .classpath
 .settings/
 *.launch
+
+setupjava.bat

@@ -13,16 +13,20 @@ public class Config extends ConfigBase {
 	public IntegerOption updateSpeed = new IntegerOption("updateSpeed", 1).setMinMax(1, 16);
 	public IntegerOption mapStyle = new IntegerOption("mapStyle", 0).setMinMax(0, 4);
 	public IntegerOption requireItem = new IntegerOption("requireItem", 0).setMinMax(0, 2);
-	
+
 	public BooleanOption mask = new BooleanOption("mask", true);
+	public BooleanOption showTiles = new BooleanOption("showTiles", false);
 
 	public Keybind keyMap = new Keybind("keyMap", Keyboard.KEY_M);
-	public Keybind keyHideMap = new Keybind("keyHideMap", Keyboard.KEY_N);
+	public Keybind keyHideMap = new Keybind("keyHideMap", Keyboard.KEY_NONE);
 	public Keybind keyFullscreen = new Keybind("keyFullscreen", Keyboard.KEY_X);
 	public Keybind keyZoomIn = new Keybind("keyZoomIn", Keyboard.KEY_ADD);
 	public Keybind keyZoomOut = new Keybind("keyZoomOut", Keyboard.KEY_SUBTRACT);
+	public Keybind keyWaypointList = new Keybind("keyWaypointList", Keyboard.KEY_NONE);
+	public Keybind keyWaypointToggle = new Keybind("keyWaypointToggle", Keyboard.KEY_NONE);
+	public Keybind keyWaypointCreate = new Keybind("keyWaypointCreate", Keyboard.KEY_NONE);
 	
-	public Keybind[] keyBinds = new Keybind[] { keyMap, keyHideMap, keyFullscreen, keyZoomIn, keyZoomOut };
+	public Keybind[] keyBinds = new Keybind[] { keyMap, keyHideMap, keyFullscreen, keyZoomIn, keyZoomOut, keyWaypointList, keyWaypointToggle, keyWaypointCreate };
 	
 	@Override
 	public List<Option<?>> getAllOptions() {
@@ -32,8 +36,9 @@ public class Config extends ConfigBase {
 		options.add(updateSpeed);
 		options.add(mapStyle);
 		options.add(requireItem);
-		
+
 		options.add(mask);
+		options.add(showTiles);
 		
 		for(int i=0; i < keyBinds.length; i++) {
 			options.add(keyBinds[i]);

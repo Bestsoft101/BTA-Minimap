@@ -14,6 +14,8 @@ import b100.minimap.data.WorldDataManager;
 import b100.minimap.gui.GuiConfigGeneral;
 import b100.minimap.gui.GuiScreen;
 import b100.minimap.gui.IGuiUtils;
+import b100.minimap.gui.waypoint.GuiCreateWaypoint;
+import b100.minimap.gui.waypoint.GuiWaypoints;
 import b100.minimap.mc.GuiUtilsImpl;
 import b100.minimap.mc.IMinecraftHelper;
 import b100.minimap.mc.MinecraftHelperImpl;
@@ -99,8 +101,8 @@ public class Minimap {
 		
 		if(style == 1) return new MapStyleGenerated(round, 0xc22020); // Red
 		if(style == 2) return new MapStyleGenerated(round, 0x22b422); // Green
-		if(style == 3) return new MapStyleInternal("/rei/", round);
-		if(style == 4) return new MapStyleInternal("/zan/", round);
+		if(style == 3) return new MapStyleInternal("/rei/", round, true);
+		if(style == 4) return new MapStyleInternal("/zan/", round, false);
 		
 		return new MapStyleGenerated(round, 0x0f39ae); // Blue
 	}
@@ -183,7 +185,7 @@ public class Minimap {
 			
 			if(config.mapVisible.value) {
 				MapConfig mapConfig = config.mapConfig;
-				if(keybind == config.keyFullscreen) mapConfig.fullscreenMap.value = !mapConfig.fullscreenMap.value;
+				if(keybind == config.keyFullscreen) mapConfig.fullscreenMap.toggle();
 				
 				if(mapConfig.fullscreenMap.value) {
 					if(keybind == config.keyZoomIn && mapConfig.fullscreenZoomLevel.value < 4) mapConfig.fullscreenZoomLevel.value = mapConfig.fullscreenZoomLevel.value + 1;
@@ -192,7 +194,11 @@ public class Minimap {
 					if(keybind == config.keyZoomIn && mapConfig.zoomLevel.value < 4) mapConfig.zoomLevel.value = mapConfig.zoomLevel.value + 1;
 					if(keybind == config.keyZoomOut && mapConfig.zoomLevel.value > 0) mapConfig.zoomLevel.value = mapConfig.zoomLevel.value - 1;
 				}
+				if(keybind == config.keyWaypointToggle) mapConfig.showWaypoints.toggle();
 			}
+			
+			if(keybind == config.keyWaypointCreate) guiUtils.displayGui(new GuiCreateWaypoint(null));
+			if(keybind == config.keyWaypointList) guiUtils.displayGui(new GuiWaypoints(null));
 		}
 	}
 	

@@ -4,7 +4,18 @@ import net.minecraft.src.Tessellator;
 
 public class RenderHelper {
 	
-	public void drawRectangle(Tessellator tessellator, double x, double y, double w, double h, float u0, float v0, float u1, float v1, int zLevel) {
+	public void drawIcon(Tessellator tessellator, double x, double y, double iconSize, double zLevel, Double angle) {
+		double x0 = x - (iconSize / 2);
+		double y0 = y - (iconSize / 2);
+		
+		if(angle != null) {
+			drawRotatedRectangle(tessellator, x0, y0, iconSize, iconSize, 0, 0, 1, 1, zLevel, angle);
+		}else {
+			drawRectangle(tessellator, x0, y0, iconSize, iconSize, 0, 0, 1, 1, zLevel);
+		}
+	}
+	
+	public void drawRectangle(Tessellator tessellator, double x, double y, double w, double h, float u0, float v0, float u1, float v1, double zLevel) {
 		double x0 = x;
 		double y0 = y;
 		
@@ -33,7 +44,7 @@ public class RenderHelper {
 	/**
 	 * pain 
 	 */
-	public void drawRotatedRectangle(Tessellator tessellator, double x, double y, double w, double h, float u0, float v0, float u1, float v1, int zLevel, double angle) {
+	public void drawRotatedRectangle(Tessellator tessellator, double x, double y, double w, double h, float u0, float v0, float u1, float v1, double zLevel, double angle) {
 		double sin = Math.sin(angle);
 		double cos = Math.cos(angle);
 		

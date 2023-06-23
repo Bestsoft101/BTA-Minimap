@@ -124,8 +124,7 @@ public abstract class GuiEditWaypointBase extends GuiScreen implements TextCompo
 		textFieldPosY.setPosition(x1 + h1, y1 + 4 * h1).setSize(innerWidth - h1, lineHeight);
 		textFieldPosZ.setPosition(x1 + h1, y1 + 5 * h1).setSize(innerWidth - h1, lineHeight);
 		
-		navTop.onResize();
-		navBottom.onResize();
+		super.onResize();
 	}
 	
 	@Override

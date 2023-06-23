@@ -43,6 +43,13 @@ public class GuiContainer extends GuiElement {
 			elements.get(i).onScroll(dir, mouseX, mouseY);
 		}
 	}
+
+	@Override
+	public void onResize() {
+		for(int i=0; i < elements.size(); i++) {
+			elements.get(i).onResize();
+		}
+	}
 	
 	public GuiElement getClickElementAt(int x, int y) {
 		for(int i = elements.size() - 1; i >= 0; i--) {

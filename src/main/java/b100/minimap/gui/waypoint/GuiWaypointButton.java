@@ -37,7 +37,12 @@ public class GuiWaypointButton extends GuiButton {
 	
 	@Override
 	public void onClick(int button) {
-		utils.displayGui(new GuiEditWaypoint(screen, waypoint));
+		if(button == 1) {
+			utils.displayGui(new GuiEditWaypoint(screen, waypoint));	
+		}else {
+			waypoint.visible = !waypoint.visible;
+		}
+		
 		
 		super.onClick(button);
 	}

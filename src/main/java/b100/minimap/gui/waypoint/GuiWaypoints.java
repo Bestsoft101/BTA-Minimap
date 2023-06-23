@@ -41,13 +41,6 @@ public class GuiWaypoints extends GuiScreen {
 		navTop.add(new GuiButtonNavigation(this, "Waypoints", waypointsContainer));
 	}
 	
-	@Override
-	public void onResize() {
-		waypointsContainer.onResize();
-		navBottom.onResize();
-		navTop.onResize();
-	}
-	
 	public void createWaypoint() {
 		utils.displayGui(new GuiCreateWaypoint(this));
 	}

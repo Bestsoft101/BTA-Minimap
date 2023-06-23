@@ -10,4 +10,8 @@ public class BooleanOption extends Option<Boolean> {
 	public Boolean parse(String string) {
 		return "true".equalsIgnoreCase(string);
 	}
+	
+	public void toggle() {
+		value = !value;
+	}
 }

@@ -1,32 +1,28 @@
 package b100.minimap.gui;
 
-import b100.minimap.Minimap;
 import b100.minimap.gui.GuiNavigationContainer.Position;
 
 public class GuiConfigDebug extends GuiScreen {
+
+	public GuiOptionsContainer options;
+	public GuiNavigationContainer navTop;
+	public GuiNavigationContainer navBottom;
 	
 	public GuiConfigDebug(GuiScreen parentScreen) {
 		super(parentScreen);
 	}
-
-	public GuiOptionsContainer options;
-	public GuiNavigationContainer nav;
 	
 	@Override
 	public void onInit() {
-		Minimap.log("Init Gui Config");
-		
 		options = add(new GuiOptionsContainer(this));
 		options.add("Masking", new GuiOptionButtonBoolean(this, minimap.config.mask));
+		options.add("Show Tiles", new GuiOptionButtonBoolean(this, minimap.config.showTiles));
 
-		nav = add(new GuiNavigationContainer(this, options, Position.BOTTOM));
-		nav.add(new GuiButtonNavigation(this, "Back", options).addActionListener((e) -> back()));
-	}
-
-	@Override
-	public void onResize() {
-		options.onResize();
-		nav.onResize();
+		navBottom = add(new GuiNavigationContainer(this, options, Position.BOTTOM));
+		navBottom.add(new GuiButtonNavigation(this, "Back", options).addActionListener((e) -> back()));
+		
+		navTop = add(new GuiNavigationContainer(this, options, Position.TOP));
+		navTop.add(new GuiButtonNavigation(this, "Debug", options));
 	}
 	
 }

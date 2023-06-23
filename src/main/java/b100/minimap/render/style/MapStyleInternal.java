@@ -11,10 +11,12 @@ public class MapStyleInternal implements MapStyle {
 
 	private String path;
 	private boolean round;
+	private boolean filter;
 	
-	public MapStyleInternal(String path, boolean round) {
+	public MapStyleInternal(String path, boolean round, boolean filter) {
 		this.path = path;
 		this.round = round;
+		this.filter = filter;
 	}
 	
 	@Override
@@ -54,6 +56,11 @@ public class MapStyleInternal implements MapStyle {
 				stream.close();
 			}catch (Exception e) {}
 		}
+	}
+
+	@Override
+	public boolean useLinearFiltering() {
+		return filter;
 	}
 
 }

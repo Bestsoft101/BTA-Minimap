@@ -24,6 +24,10 @@ public abstract class GuiElement extends Gui {
 	public void onScroll(int dir, int mouseX, int mouseY) {
 		
 	}
+
+	public void onResize() {
+		
+	}
 	
 	public boolean isSolid() {
 		return true;

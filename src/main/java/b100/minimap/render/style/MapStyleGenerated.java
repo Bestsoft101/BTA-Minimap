@@ -100,4 +100,9 @@ public class MapStyleGenerated implements MapStyle {
 		return round;
 	}
 
+	@Override
+	public boolean useLinearFiltering() {
+		return true;
+	}
+
 }

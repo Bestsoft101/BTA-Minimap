@@ -39,6 +39,7 @@ public class MapTileRenderer {
 		
 		int shadeType = minimap.config.mapConfig.shadeType.value;
 		boolean lighting = minimap.config.mapConfig.lighting.value;
+		boolean renderAll = minimap.config.mapConfig.renderAllBlocks.value;
 		
 		for(int i=0; i < 18; i++) {
 			for(int j=0; j < 18; j++) {
@@ -53,6 +54,11 @@ public class MapTileRenderer {
 				for(int y = worldHeight - 1; y >= 0; y--) {
 					int id = world.getBlockId(x, y, z);
 					RenderType renderType = blockColors.getRenderType(id);
+
+					if(renderAll && renderType == RenderType.INVISIBLE && id > 0) {
+						renderType = RenderType.OPAQUE;
+					}
+					
 					if(renderType != RenderType.INVISIBLE) {
 						rendered = true;
 						if(!maxHeightSet) {
@@ -86,6 +92,10 @@ public class MapTileRenderer {
 						int id = world.getBlockId(x, y, z);
 						Block block = Block.getBlock(id);
 						RenderType renderType = blockColors.getRenderType(id);
+
+						if(renderAll && renderType == RenderType.INVISIBLE && id > 0) {
+							renderType = RenderType.OPAQUE;
+						}
 						
 						if(renderType == RenderType.OPAQUE) {
 							color = tileColors.getTileColor(block.getBlockTexture(world, x, y, z, 1));

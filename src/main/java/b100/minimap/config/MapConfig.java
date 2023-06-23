@@ -15,6 +15,8 @@ public class MapConfig extends ConfigBase {
 	public BooleanOption rotateMap = new BooleanOption("rotateMap", false);
 	public BooleanOption roundMap = new BooleanOption("roundMap", true);
 	public IntegerOption frameOpacity = new IntegerOption("frameOpacity", 100).setMinMax(0, 100);
+	public BooleanOption renderAllBlocks = new BooleanOption("showAllBlocks", false);
+	public BooleanOption showWaypoints = new BooleanOption("showWaypoints", true);
 	
 	@Override
 	public List<Option<?>> getAllOptions() {
@@ -30,6 +32,8 @@ public class MapConfig extends ConfigBase {
 		options.add(rotateMap);
 		options.add(roundMap);
 		options.add(frameOpacity);
+		options.add(renderAllBlocks);
+		options.add(showWaypoints);
 		
 		return options;
 	}
