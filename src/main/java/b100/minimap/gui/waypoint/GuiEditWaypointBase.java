@@ -11,8 +11,8 @@ import b100.minimap.gui.GuiTextComponentInteger;
 import b100.minimap.gui.GuiTextElement;
 import b100.minimap.gui.GuiTextField;
 import b100.minimap.gui.TextComponentListener;
+import b100.minimap.mc.Player;
 import b100.minimap.waypoint.Waypoint;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.MathHelper;
 
 public abstract class GuiEditWaypointBase extends GuiScreen implements TextComponentListener {
@@ -52,11 +52,11 @@ public abstract class GuiEditWaypointBase extends GuiScreen implements TextCompo
 	}
 	
 	public void setPlayerOffset() {
-		EntityPlayer player = Minimap.instance.minecraftHelper.getThePlayer();
+		Player player = Minimap.instance.minecraftHelper.getThePlayer();
 		
-		this.playerOffsetX = MathHelper.floor_double(player.posX);
-		this.playerOffsetY = MathHelper.floor_double(player.posY);
-		this.playerOffsetZ = MathHelper.floor_double(player.posZ);
+		this.playerOffsetX = MathHelper.floor_double(player.getPosX(1.0f));
+		this.playerOffsetY = MathHelper.floor_double(player.getPosY(1.0f));
+		this.playerOffsetZ = MathHelper.floor_double(player.getPosZ(1.0f));
 	}
 
 	@Override

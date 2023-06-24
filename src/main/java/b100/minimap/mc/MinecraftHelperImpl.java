@@ -8,14 +8,17 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
+import b100.minimap.render.WorldListener;
+import b100.minimap.render.block.BlockRenderManager;
+import b100.minimap.render.block.RenderType;
 import b100.utils.ReflectUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.Block;
 import net.minecraft.src.ChatAllowedCharacters;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.GLAllocation;
 import net.minecraft.src.GuiChat;
-import net.minecraft.src.IWorldAccess;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NetClientHandler;
@@ -29,6 +32,8 @@ import net.minecraft.src.helper.Buffer;
 public class MinecraftHelperImpl implements IMinecraftHelper {
 
 	private Minecraft mc = Minecraft.getMinecraft();
+	private PlayerWrapper playerWrapper = new PlayerWrapper();
+	public WorldAccessImpl worldAccessImpl = new WorldAccessImpl();
 	
 	@Override
 	public Minecraft getMinecraftInstance() {
@@ -66,18 +71,22 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	}
 
 	@Override
-	public void addWorldAccess(World world, IWorldAccess worldAccess) {
-		world.addWorldAccess(worldAccess);
+	public void addWorldListener(World world, WorldListener listener) {
+		worldAccessImpl.listeners.add(listener);
 	}
 
 	@Override
-	public void removeWorldAccess(World world, IWorldAccess worldAccess) {
-		world.removeWorldAccess(worldAccess);
+	public void removeWorldListener(World world, WorldListener listener) {
+		worldAccessImpl.listeners.remove(listener);
 	}
 
 	@Override
-	public EntityPlayerSP getThePlayer() {
-		return mc.thePlayer;
+	public Player getThePlayer() {
+		EntityPlayerSP player = mc.thePlayer;
+		if(player != playerWrapper.player) {
+			playerWrapper.player = player;
+		}
+		return playerWrapper;
 	}
 
 	@Override
@@ -128,12 +137,11 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	}
 
 	@Override
-	public boolean doesPlayerHaveItem(Item item) {
-		EntityPlayer player = getThePlayer();
-		
+	public boolean doesPlayerHaveCompass() {
+		EntityPlayer player = playerWrapper.player;
 		for(int i=0; i < player.inventory.getSizeInventory(); i++) {
 			ItemStack stack = player.inventory.getStackInSlot(i);
-			if(stack != null && stack.getItem() == item) {
+			if(stack != null && stack.getItem() == Item.toolCompass) {
 				return true;
 			}
 		}
@@ -175,6 +183,29 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	@Override
 	public float getScreenPaddingPercentage() {
 		return mc.gameSettings.screenPadding.value * 0.125f;
+	}
+
+	@Override
+	public void onWorldChanged(World world) {
+		if(world != null) {
+			world.addWorldAccess(worldAccessImpl);	
+		}
+	}
+
+	@Override
+	public void setupBlockRenderTypes(BlockRenderManager m) {
+		m.setRenderType(Block.glass, RenderType.INVISIBLE);
+		m.setRenderType(Block.torchCoal, RenderType.INVISIBLE);
+		
+		m.setRenderType(Block.tallgrass, RenderType.INVISIBLE);
+		m.setRenderType(Block.tallgrassFern, RenderType.INVISIBLE);
+		m.setRenderType(Block.flowerRed, RenderType.INVISIBLE);
+		m.setRenderType(Block.flowerYellow, RenderType.INVISIBLE);
+		m.setRenderType(Block.algae, RenderType.INVISIBLE);
+
+		m.setRenderType(Block.fluidWaterFlowing, RenderType.TRANSPARENT);
+		m.setRenderType(Block.fluidWaterStill, RenderType.TRANSPARENT);
+		m.setRenderType(Block.ice, RenderType.TRANSPARENT);
 	}
 
 }

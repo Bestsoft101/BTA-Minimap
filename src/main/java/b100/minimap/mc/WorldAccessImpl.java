@@ -1,27 +1,30 @@
 package b100.minimap.mc;
 
-import b100.minimap.render.IWorldListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import b100.minimap.render.WorldListener;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IWorldAccess;
 import net.minecraft.src.TileEntity;
 
-public class WorldAccess implements IWorldAccess {
+public class WorldAccessImpl implements IWorldAccess {
 
-	private IWorldListener worldListener;
-	
-	public WorldAccess(IWorldListener worldListener) {
-		this.worldListener = worldListener;
-	}
+	public List<WorldListener> listeners = new ArrayList<>();
 	
 	@Override
 	public void markBlockAndNeighborsNeedsUpdate(int x, int y, int z) {
-		worldListener.onUpdateBlock(x, y, z);
+		for(int i=0; i < listeners.size(); i++) {
+			listeners.get(i).onUpdateBlock(x, y, z);
+		}
 	}
 
 	@Override
 	public void markBlockRangeNeedsUpdate(int var1, int var2, int var3, int var4, int var5, int var6) {
-		worldListener.onUpdateBlocks(var1, var2, var3, var4, var5, var6);
+		for(int i=0; i < listeners.size(); i++) {
+			listeners.get(i).onUpdateBlocks(var1, var2, var3, var4, var5, var6);
+		}
 	}
 
 	@Override
@@ -46,7 +49,9 @@ public class WorldAccess implements IWorldAccess {
 
 	@Override
 	public void updateAllRenderers() {
-		worldListener.onUpdateAllChunks();
+		for(int i=0; i < listeners.size(); i++) {
+			listeners.get(i).onUpdateAllChunks();
+		}
 	}
 
 	@Override

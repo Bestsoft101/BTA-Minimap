@@ -13,14 +13,14 @@ import java.util.Map;
 
 import b100.minimap.Minimap;
 import b100.minimap.config.MapConfig;
+import b100.minimap.mc.Player;
 import b100.minimap.render.style.MapStyle;
 import b100.minimap.waypoint.Waypoint;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.MathHelper;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.World;
 
-public class MapRender implements IWorldListener {
+public class MapRender implements WorldListener {
 	
 	private Minimap minimap;
 	private World world;
@@ -114,16 +114,16 @@ public class MapRender implements IWorldListener {
 		glPushMatrix();
 		glLoadIdentity();
 		
-		EntityPlayer player = minimap.minecraftHelper.getThePlayer();
+		Player player = minimap.minecraftHelper.getThePlayer();
 		
-		playerPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
-		playerPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
-		playerPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+		playerPosX = player.getPosX(partialTicks);
+		playerPosY = player.getPosY(partialTicks);
+		playerPosZ = player.getPosZ(partialTicks);
 		
 		playerChunkX = MathHelper.floor_double(playerPosX) >> 4;
 		playerChunkZ = MathHelper.floor_double(playerPosZ) >> 4;
 		
-		playerRotation = player.rotationYaw;
+		playerRotation = player.getRotationYaw();
 		
 		mapConfig = minimap.config.mapConfig;
 

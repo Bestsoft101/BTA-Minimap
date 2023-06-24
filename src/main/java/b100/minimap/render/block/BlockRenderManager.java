@@ -1,5 +1,6 @@
 package b100.minimap.render.block;
 
+import b100.minimap.Minimap;
 import net.minecraft.src.Block;
 
 public class BlockRenderManager {
@@ -16,19 +17,8 @@ public class BlockRenderManager {
 		}
 		
 		renderTypes[0] = RenderType.INVISIBLE;
-
-		setRenderType(Block.glass, RenderType.INVISIBLE);
-		setRenderType(Block.torchCoal, RenderType.INVISIBLE);
 		
-		setRenderType(Block.tallgrass, RenderType.INVISIBLE);
-		setRenderType(Block.tallgrassFern, RenderType.INVISIBLE);
-		setRenderType(Block.flowerRed, RenderType.INVISIBLE);
-		setRenderType(Block.flowerYellow, RenderType.INVISIBLE);
-		setRenderType(Block.algae, RenderType.INVISIBLE);
-
-		setRenderType(Block.fluidWaterFlowing, RenderType.TRANSPARENT);
-		setRenderType(Block.fluidWaterStill, RenderType.TRANSPARENT);
-		setRenderType(Block.ice, RenderType.TRANSPARENT);
+		Minimap.instance.minecraftHelper.setupBlockRenderTypes(this);
 	}
 	
 	public void setRenderType(Block block, RenderType renderType) {

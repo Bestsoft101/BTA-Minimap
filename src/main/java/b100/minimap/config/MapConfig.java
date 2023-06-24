@@ -5,7 +5,7 @@ import java.util.List;
 
 public class MapConfig extends ConfigBase {
 	
-	public IntegerOption width = new IntegerOption("width", 32).setMinMax(1, 100);
+	public IntegerOption width = new IntegerOption("width", 16).setMinMax(1, 100);
 	public IntegerOption position = new IntegerOption("position", 1).setMinMax(0, 3);
 	public IntegerOption shadeType = new IntegerOption("shadeType", 1).setMinMax(0, 1);
 	public BooleanOption lighting = new BooleanOption("lighting", true);
@@ -13,7 +13,7 @@ public class MapConfig extends ConfigBase {
 	public BooleanOption fullscreenMap = new BooleanOption("fullscreenMap", false);
 	public IntegerOption fullscreenZoomLevel = new IntegerOption("fullscreenZoomLevel", 0);
 	public BooleanOption rotateMap = new BooleanOption("rotateMap", false);
-	public BooleanOption roundMap = new BooleanOption("roundMap", true);
+	public BooleanOption roundMap = new BooleanOption("roundMap", false);
 	public IntegerOption frameOpacity = new IntegerOption("frameOpacity", 100).setMinMax(0, 100);
 	public BooleanOption renderAllBlocks = new BooleanOption("showAllBlocks", false);
 	public BooleanOption showWaypoints = new BooleanOption("showWaypoints", true);

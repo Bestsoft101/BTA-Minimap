@@ -1,6 +1,6 @@
 package b100.minimap.render;
 
-public interface IWorldListener {
+public interface WorldListener {
 	
 	public void onUpdateBlock(int x, int y, int z);
 	

@@ -12,7 +12,6 @@ public class GuiOptionButtonRequireItem extends GuiOptionButtonInteger {
 	public String getOptionValueString() {
 		if(option.value == 0) return "None";
 		if(option.value == 1) return "Compass";
-		if(option.value == 2) return "Map";
 		return super.getOptionValueString();
 	}
 

@@ -4,10 +4,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
 
+import b100.minimap.render.WorldListener;
+import b100.minimap.render.block.BlockRenderManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.EntityPlayerSP;
-import net.minecraft.src.IWorldAccess;
-import net.minecraft.src.Item;
 import net.minecraft.src.World;
 
 public interface IMinecraftHelper {
@@ -26,11 +25,11 @@ public interface IMinecraftHelper {
 	
 	public int getGuiScaleFactor();
 	
-	public void addWorldAccess(World world, IWorldAccess worldAccess);
+	public void addWorldListener(World world, WorldListener listener);
 	
-	public void removeWorldAccess(World world, IWorldAccess worldAccess);
+	public void removeWorldListener(World world, WorldListener listener);
 	
-	public EntityPlayerSP getThePlayer();
+	public Player getThePlayer();
 	
 	public int generateTexture();
 	
@@ -46,8 +45,6 @@ public interface IMinecraftHelper {
 	
 	public boolean isDebugScreenOpened();
 	
-	public boolean doesPlayerHaveItem(Item item);
-	
 	public boolean isMultiplayer(World world);
 	
 	public String getWorldDirectoryName(World world);
@@ -57,5 +54,11 @@ public interface IMinecraftHelper {
 	public boolean isCharacterAllowed(char c);
 	
 	public float getScreenPaddingPercentage();
+	
+	public boolean doesPlayerHaveCompass();
+	
+	public void onWorldChanged(World world);
+	
+	public void setupBlockRenderTypes(BlockRenderManager blockRenderManager);
 	
 }

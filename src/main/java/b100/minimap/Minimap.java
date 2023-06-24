@@ -19,7 +19,6 @@ import b100.minimap.gui.waypoint.GuiWaypoints;
 import b100.minimap.mc.GuiUtilsImpl;
 import b100.minimap.mc.IMinecraftHelper;
 import b100.minimap.mc.MinecraftHelperImpl;
-import b100.minimap.mc.WorldAccess;
 import b100.minimap.render.MapRender;
 import b100.minimap.render.block.BlockRenderManager;
 import b100.minimap.render.block.TileColors;
@@ -27,7 +26,6 @@ import b100.minimap.render.style.MapStyle;
 import b100.minimap.render.style.MapStyleGenerated;
 import b100.minimap.render.style.MapStyleInternal;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.Item;
 import net.minecraft.src.World;
 
 public class Minimap {
@@ -41,7 +39,6 @@ public class Minimap {
 	public IMinecraftHelper minecraftHelper = new MinecraftHelperImpl();
 	public Minecraft mc = minecraftHelper.getMinecraftInstance();
 	public MapRender mapRender;
-	public WorldAccess worldAccess;
 	public World theWorld;
 	public Config config;
 	public BlockRenderManager blockRenderManager;
@@ -57,7 +54,7 @@ public class Minimap {
 	
 	public void init() {
 		mapRender = new MapRender(this);
-		worldAccess = new WorldAccess(mapRender);
+		minecraftHelper.addWorldListener(theWorld, mapRender);
 		config = new Config();
 		loadConfig();
 		worldDataManager = new WorldDataManager(this);
@@ -135,8 +132,7 @@ public class Minimap {
 		
 		boolean unlocked = false;
 		if(config.requireItem.value == 0) unlocked = true;
-		if(config.requireItem.value == 1) unlocked = minecraftHelper.doesPlayerHaveItem(Item.toolCompass);
-		if(config.requireItem.value == 2) unlocked = minecraftHelper.doesPlayerHaveItem(Item.map);
+		if(config.requireItem.value == 1) unlocked = minecraftHelper.doesPlayerHaveCompass();
 		
 		if(config.mapVisible.value && unlocked && minecraftHelper.isGuiVisible() && !minecraftHelper.isDebugScreenOpened() && (!guiUtils.isGuiOpened() || guiUtils.isMinimapGuiOpened() || minecraftHelper.isChatOpened())) {
 			mapRender.renderMap(partialTicks);
@@ -205,15 +201,11 @@ public class Minimap {
 	public void onWorldChange(World newWorld) {
 		log("World Changed!");
 		
-		if(theWorld != null) {
-			minecraftHelper.removeWorldAccess(theWorld, worldAccess);
-		}
-		
 		this.theWorld = newWorld;
 		
+		minecraftHelper.onWorldChanged(newWorld);
+		
 		if(theWorld != null) {
-			minecraftHelper.addWorldAccess(theWorld, worldAccess);
-			
 			this.worldData = worldDataManager.getWorldData(theWorld);
 			this.worldData.load();
 			log("World Data Directory: " + this.worldData.directory.getAbsolutePath());
