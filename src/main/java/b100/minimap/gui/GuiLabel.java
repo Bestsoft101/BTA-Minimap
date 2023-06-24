@@ -8,12 +8,13 @@ public class GuiLabel extends Gui {
 	public int textColor = 0xFFFFFF;
 	
 	public GuiLabel(String string) {
-		setText(string);
+		this.text = string;
 	}
 	
 	public GuiLabel(String string, int posX, int posY) {
-		setText(string);
-		setPosition(posX, posY);
+		this.text = string;
+		this.posX = posX;
+		this.posY = posY;
 	}
 	
 	public void draw(float partialTicks) {

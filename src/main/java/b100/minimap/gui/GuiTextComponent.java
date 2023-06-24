@@ -209,7 +209,7 @@ public class GuiTextComponent extends GuiLabel {
 			for(int i=0; i < textComponentListeners.size(); i++) {
 				textComponentListeners.get(i).onTextComponentChanged(this);
 			}
-		}catch (CancelEventException e) {}
+		}catch (CancelEventException e) {}	
 	}
 	
 	@Override
@@ -217,6 +217,7 @@ public class GuiTextComponent extends GuiLabel {
 		this.text = string;
 		this.cursorPosition = string.length();
 		this.textSelection = -1;
+		onUpdate();
 	}
 	
 	public boolean isCharacterAllowed(char c) {
@@ -253,11 +254,13 @@ public class GuiTextComponent extends GuiLabel {
 		return Math.max(cursorPosition, textSelection);
 	}
 	
-	public void addTextComponentListener(TextComponentListener textComponentListener) {
+	public GuiTextComponent addTextComponentListener(TextComponentListener textComponentListener) {
 		this.textComponentListeners.add(textComponentListener);
+		return this;
 	}
 	
-	public void removeTextComponentListener(TextComponentListener textComponentListener) {
+	public GuiTextComponent removeTextComponentListener(TextComponentListener textComponentListener) {
 		this.textComponentListeners.remove(textComponentListener);
+		return this;
 	}
 }

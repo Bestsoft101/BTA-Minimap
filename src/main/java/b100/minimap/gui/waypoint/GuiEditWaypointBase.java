@@ -1,10 +1,14 @@
 package b100.minimap.gui.waypoint;
 
 import b100.minimap.Minimap;
+import b100.minimap.gui.GuiButton;
 import b100.minimap.gui.GuiButtonNavigation;
 import b100.minimap.gui.GuiContainerBox;
+import b100.minimap.gui.GuiElement;
 import b100.minimap.gui.GuiNavigationContainer;
 import b100.minimap.gui.GuiNavigationContainer.Position;
+import b100.minimap.gui.color.ColorListener;
+import b100.minimap.gui.color.GuiColorSelectScreen;
 import b100.minimap.gui.GuiScreen;
 import b100.minimap.gui.GuiTextComponent;
 import b100.minimap.gui.GuiTextComponentInteger;
@@ -15,7 +19,7 @@ import b100.minimap.mc.Player;
 import b100.minimap.waypoint.Waypoint;
 import net.minecraft.src.MathHelper;
 
-public abstract class GuiEditWaypointBase extends GuiScreen implements TextComponentListener {
+public abstract class GuiEditWaypointBase extends GuiScreen implements TextComponentListener, ColorListener {
 	
 	public String title;
 	
@@ -36,10 +40,13 @@ public abstract class GuiEditWaypointBase extends GuiScreen implements TextCompo
 	public GuiTextComponentInteger textComponentZ;
 
 	public GuiTextElement textName;
-	public GuiTextElement textPosition;
+	public GuiTextElement textOffset;
 	public GuiTextElement textX;
 	public GuiTextElement textY;
 	public GuiTextElement textZ;
+	public GuiTextElement textColor;
+	
+	public GuiButton colorButton;
 	
 	public int playerOffsetX;
 	public int playerOffsetY;
@@ -80,10 +87,11 @@ public abstract class GuiEditWaypointBase extends GuiScreen implements TextCompo
 		this.textFieldPosZ = container.add(new GuiTextField(this, textComponentZ));
 		
 		this.textName = add(new GuiTextElement("Name"));
-		this.textPosition = add(new GuiTextElement("Offset"));
+		this.textOffset = add(new GuiTextElement("Offset"));
 		this.textX = add(new GuiTextElement("x"));
 		this.textY = add(new GuiTextElement("y"));
 		this.textZ = add(new GuiTextElement("z"));
+		this.textColor = add(new GuiTextElement("Color"));
 		
 		this.textFieldName.textComponent.addTextComponentListener(this);
 		this.textFieldPosX.textComponent.addTextComponentListener(this);
@@ -91,6 +99,8 @@ public abstract class GuiEditWaypointBase extends GuiScreen implements TextCompo
 		this.textFieldPosZ.textComponent.addTextComponentListener(this);
 		
 		this.textFieldName.textComponent.setFocused(true);
+		
+		this.colorButton = add(new GuiWaypointColorButton(this, waypoint)).addActionListener((e) -> utils.displayGui(new GuiColorSelectScreen(this, waypoint.color, this)));
 	}
 	
 	@Override
@@ -99,7 +109,7 @@ public abstract class GuiEditWaypointBase extends GuiScreen implements TextCompo
 		final int paddingInner = 1;
 
 		final int lineHeight = 10;
-		final int h1 = lineHeight + paddingInner;
+		final int lineHeightPad = lineHeight + paddingInner;
 		
 		int w = 150;
 		int h = 6 * lineHeight + 5 * paddingInner + 2 * paddingOuter;
@@ -109,20 +119,30 @@ public abstract class GuiEditWaypointBase extends GuiScreen implements TextCompo
 		
 		int innerWidth = w - 2 * paddingOuter;
 		
-		int x1 = container.posX + paddingOuter;
-		int y1 = container.posY + paddingOuter;
+		int posXInner = container.posX + paddingOuter;
+		int posYInner = container.posY + paddingOuter;
 		
-		textName.setPosition(x1, y1).setSize(innerWidth, lineHeight);
-		textFieldName.setPosition(x1, y1 + 1 * h1).setSize(innerWidth, lineHeight);
-		
-		textPosition.setPosition(x1, y1 + 2 * h1).setSize(innerWidth, lineHeight);
-		textX.setPosition(x1, y1 + 3 * h1).setSize(lineHeight, lineHeight);
-		textY.setPosition(x1, y1 + 4 * h1).setSize(lineHeight, lineHeight);
-		textZ.setPosition(x1, y1 + 5 * h1).setSize(lineHeight, lineHeight);
+		textName.setPosition(posXInner, posYInner).setSize(innerWidth, lineHeight);
+		textFieldName.setPosition(posXInner, posYInner + 1 * lineHeightPad).setSize(innerWidth, lineHeight);
 
-		textFieldPosX.setPosition(x1 + h1, y1 + 3 * h1).setSize(innerWidth - h1, lineHeight);
-		textFieldPosY.setPosition(x1 + h1, y1 + 4 * h1).setSize(innerWidth - h1, lineHeight);
-		textFieldPosZ.setPosition(x1 + h1, y1 + 5 * h1).setSize(innerWidth - h1, lineHeight);
+		int colorBoxWidth = 3 * lineHeight + 2 * paddingInner;
+		int offsetBoxX = posXInner;
+		int offsetBoxY = posYInner + 2 * lineHeightPad;
+		int offsetBoxWidth = innerWidth - colorBoxWidth - paddingInner;
+		int colorBoxX = offsetBoxX + offsetBoxWidth + paddingInner;
+		
+		textOffset.setPosition(offsetBoxX, offsetBoxY).setSize(offsetBoxWidth, lineHeight);
+		textX.setPosition(offsetBoxX, offsetBoxY + 1 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textY.setPosition(offsetBoxX, offsetBoxY + 2 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textZ.setPosition(offsetBoxX, offsetBoxY + 3 * lineHeightPad).setSize(lineHeight, lineHeight);
+		
+		int positionTextFieldWidth = innerWidth - lineHeightPad - colorBoxWidth - paddingInner;
+		textFieldPosX.setPosition(posXInner + lineHeightPad, posYInner + 3 * lineHeightPad).setSize(positionTextFieldWidth, lineHeight);
+		textFieldPosY.setPosition(posXInner + lineHeightPad, posYInner + 4 * lineHeightPad).setSize(positionTextFieldWidth, lineHeight);
+		textFieldPosZ.setPosition(posXInner + lineHeightPad, posYInner + 5 * lineHeightPad).setSize(positionTextFieldWidth, lineHeight);
+
+		textColor.setPosition(colorBoxX, offsetBoxY).setSize(colorBoxWidth, lineHeight);
+		colorButton.setPosition(colorBoxX, offsetBoxY + lineHeightPad).setSize(colorBoxWidth, colorBoxWidth);
 		
 		super.onResize();
 	}
@@ -133,6 +153,11 @@ public abstract class GuiEditWaypointBase extends GuiScreen implements TextCompo
 		this.waypoint.x = this.textComponentX.getValue() + playerOffsetX;
 		this.waypoint.y = this.textComponentY.getValue() + playerOffsetY;
 		this.waypoint.z = this.textComponentZ.getValue() + playerOffsetZ;
+	}
+	
+	@Override
+	public void onColorChanged(GuiElement source, int color) {
+		this.waypoint.color = color;
 	}
 	
 	public abstract void ok();

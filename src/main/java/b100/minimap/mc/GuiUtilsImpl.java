@@ -131,4 +131,24 @@ public class GuiUtilsImpl implements IGuiUtils {
         drawIcon(icon, x, y, color);
 	}
 
+	@Override
+	public void drawTexturedRectangle(int x, int y, int w, int h, float u0, float v0, float u1, float v1, int color) {
+		Tessellator tessellator = Tessellator.instance;
+		int a = (color >> 24) & 0xFF;
+		int r = (color >> 16) & 0xFF;
+		int g = (color >>  8) & 0xFF;
+		int b = (color >>  0) & 0xFF;
+		int x0 = x;
+		int y0 = y;
+		int x1 = x + w;
+		int y1 = y + h;
+		tessellator.startDrawingQuads();
+		tessellator.setColorRGBA(r, g, b, a);
+		tessellator.addVertexWithUV(x0, y0, 0, u0, v0);
+		tessellator.addVertexWithUV(x0, y1, 0, u0, v1);
+		tessellator.addVertexWithUV(x1, y1, 0, u1, v1);
+		tessellator.addVertexWithUV(x1, y0, 0, u1, v0);
+		tessellator.draw();
+	}
+
 }

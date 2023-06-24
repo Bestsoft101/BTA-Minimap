@@ -41,7 +41,10 @@ public abstract class GuiScreen extends GuiContainer {
 			if(key == Keyboard.KEY_BACK) {
 				back();
 				throw new CancelEventException();
-			}	
+			}
+			if(key == Keyboard.KEY_F5) {
+				onResize();
+			}
 		}
 	}
 	

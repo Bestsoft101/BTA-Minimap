@@ -68,6 +68,12 @@ public abstract class Utils {
 		return a;
 	}
 	
+	public static float clamp(float a, float min, float max) {
+		if(a > max) return max;
+		if(a < min) return min;
+		return a;
+	}
+	
 	public static float mix(float a, float b, float c) {
 		return a * (1.0f - c) + b * c;
 	}

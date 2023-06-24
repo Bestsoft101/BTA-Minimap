@@ -13,6 +13,20 @@ public class GuiTextElement extends GuiElement {
 		setText(text);
 	}
 	
+	public GuiTextElement(String text, Align align) {
+		setText(text);
+		
+		this.alignHorizontal = align;
+		this.alignVertical = align;
+	}
+	
+	public GuiTextElement(String text, Align alignHorizontal, Align alignVertical) {
+		setText(text);
+		
+		this.alignHorizontal = alignHorizontal;
+		this.alignVertical = alignVertical;
+	}
+	
 	@Override
 	public void draw(float partialTicks) {
 		int stringWidth = utils.getStringWidth(text);
