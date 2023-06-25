@@ -28,7 +28,7 @@ public class WorldDataManager {
 			folder = new File(folder, minimap.minecraftHelper.getWorldDirectoryName(world));
 		}
 		
-		return new WorldData(folder);
+		return new WorldData(folder, world);
 	}
 	
 }

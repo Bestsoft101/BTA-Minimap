@@ -1,12 +1,18 @@
 package b100.minimap.gui;
 
+import b100.minimap.utils.Utils;
+
 public class GuiTextComponentInteger extends GuiTextComponent {
 	
 	public Integer min;
 	public Integer max;
+	public int value;
+	private boolean isValid = true;
 	
 	public GuiTextComponentInteger(int value) {
 		super(String.valueOf(value));
+		
+		this.value = value;
 	}
 	
 	public GuiTextComponentInteger(int value, Integer min, Integer max) {
@@ -21,29 +27,12 @@ public class GuiTextComponentInteger extends GuiTextComponent {
 		return super.isCharacterAllowed(c) && "0123456789-".indexOf(c) != -1;
 	}
 	
-	@Override
-	public void setText(String string) {
-		if(string.length() > 0) {
-			int value = Integer.parseInt(string);
-			int clampedValue = clamp(value);
-			if(value != clampedValue) {
-				setText(String.valueOf(clampedValue));
-				return;
-			}	
-		}
-		super.setText(string);
-	}
-	
 	public void setValue(int value) {
 		setText(String.valueOf(clamp(value)));
 	}
 	
 	public int getValue() {
-		try{
-			return clamp(Integer.parseInt(text));
-		}catch (NumberFormatException e) {
-			return clamp(0);
-		}
+		return value;
 	}
 	
 	public int clamp(int val) {
@@ -54,15 +43,37 @@ public class GuiTextComponentInteger extends GuiTextComponent {
 	
 	@Override
 	public void onUpdate() {
-		super.onUpdate();
-		
-		if(text.length() > 0) {
-			final int val = Integer.parseInt(text);
-			int newVal = clamp(val);
-			if(val != newVal) {
-				setValue(newVal);
+		try {
+			int value = Integer.parseInt(text);
+			this.isValid = true;
+			int clampedValue = clamp(value);
+			
+			if(value != clampedValue) {
+				setValue(clampedValue);
+			}else {
+				this.value = value;
 			}
+		}catch (NumberFormatException e) {
+			this.isValid = false;
 		}
+		super.onUpdate();
+	}
+	
+	@Override
+	public void scrollEvent(int direction) {
+		super.scrollEvent(direction);
+		if(focused) {
+			int newValue = clamp(this.value + Utils.clamp(direction, -1, 1));
+			if(newValue != value) {
+				setValue(newValue);
+			}
+			throw new CancelEventException();	
+		}
+	}
+	
+	@Override
+	public int getTextColor() {
+		return isValid ? super.getTextColor() : 0xFF0000;
 	}
 
 }

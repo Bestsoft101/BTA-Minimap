@@ -23,7 +23,7 @@ public class GuiOptionButtonInteger extends GuiOptionButton<Integer> {
 	}
 	
 	@Override
-	public void onScroll(int dir, int mouseX, int mouseY) {
+	public void scrollEvent(int dir, int mouseX, int mouseY) {
 		if(enableScrolling && screen.getClickElementAt(mouseX, mouseY) == this) {
 			int scrollAmount = 0;
 			if(dir > 0) scrollAmount = 1;

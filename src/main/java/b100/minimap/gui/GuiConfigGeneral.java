@@ -1,6 +1,5 @@
 package b100.minimap.gui;
 
-import b100.minimap.Minimap;
 import b100.minimap.config.Config;
 import b100.minimap.config.Option;
 import b100.minimap.gui.GuiNavigationContainer.Position;
@@ -18,8 +17,6 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 	
 	@Override
 	public void onInit() {
-		Minimap.log("Init Gui Config");
-		
 		Config config = minimap.config;
 		
 		options = add(new GuiOptionsContainer(this));

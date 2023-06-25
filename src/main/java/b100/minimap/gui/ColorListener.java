@@ -1,6 +1,4 @@
-package b100.minimap.gui.color;
-
-import b100.minimap.gui.GuiElement;
+package b100.minimap.gui;
 
 public interface ColorListener {
 	

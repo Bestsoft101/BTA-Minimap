@@ -1,4 +1,4 @@
-package b100.minimap.mc;
+package b100.minimap.mc.impl;
 
 import static org.lwjgl.opengl.GL11.*;
 

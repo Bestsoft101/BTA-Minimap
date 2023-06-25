@@ -11,5 +11,7 @@ public interface Player {
 	public double getRotationPitch();
 	
 	public double getRotationYaw();
+	
+	public void teleportTo(int x, int y, int z);
 
 }

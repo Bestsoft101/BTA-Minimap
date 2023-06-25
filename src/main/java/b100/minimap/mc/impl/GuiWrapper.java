@@ -1,4 +1,4 @@
-package b100.minimap.mc;
+package b100.minimap.mc.impl;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -50,7 +50,7 @@ public class GuiWrapper extends net.minecraft.src.GuiScreen {
 			int scroll = Mouse.getDWheel();
 			if(scroll != 0) {
 				try{
-					minimapGui.onScroll(scroll, mouseX, mouseY);
+					minimapGui.scrollEvent(scroll, mouseX, mouseY);
 				}catch (CancelEventException e) {}
 			}
 		}

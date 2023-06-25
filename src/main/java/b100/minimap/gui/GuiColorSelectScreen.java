@@ -1,4 +1,4 @@
-package b100.minimap.gui.color;
+package b100.minimap.gui;
 
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_CLAMP;
@@ -24,19 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import b100.minimap.Minimap;
-import b100.minimap.gui.CancelEventException;
-import b100.minimap.gui.GuiButtonNavigation;
-import b100.minimap.gui.GuiContainerBox;
-import b100.minimap.gui.GuiElement;
-import b100.minimap.gui.GuiNavigationContainer;
 import b100.minimap.gui.GuiNavigationContainer.Position;
-import b100.minimap.gui.GuiScreen;
-import b100.minimap.gui.GuiTextComponent;
-import b100.minimap.gui.GuiTextComponentInteger;
-import b100.minimap.gui.GuiTextElement;
 import b100.minimap.gui.GuiTextElement.Align;
-import b100.minimap.gui.GuiTextField;
-import b100.minimap.gui.TextComponentListener;
 import b100.minimap.utils.Utils;
 import net.minecraft.src.GLAllocation;
 
@@ -45,12 +34,22 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 	protected int colorPickerTexture1;
 	protected int colorPickerTexture2;
 	
-	protected GuiColorBrightnessSaturationElement1 colorElement1;
+	protected GuiColorBrightnessSaturationElement colorElement1;
 	protected GuiColorHueElement colorElement2;
 	protected GuiColorPreviewElement colorPreviewElement;
 	
 	protected final int previousColor;
+	
 	protected int color;
+	
+	protected int red;		// 0 - 255
+	protected int green;	// 0 - 255
+	protected int blue;		// 0 - 255
+	
+	protected float hue;			// 0.0f - 1.0f
+	protected float saturation;		// 0.0f - 1.0f
+	protected float brightness;		// 0.0f - 1.0f
+	
 	protected float[] hsb = new float[3];
 	
 	public GuiContainerBox container;
@@ -90,42 +89,26 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 	
 	public GuiColorSelectScreen(GuiScreen parentScreen, int color, ColorListener colorListener) {
 		super(parentScreen);
+		colorListeners.add(colorListener);
+		
 		this.previousColor = this.color = color;
 		
-		colorListeners.add(colorListener);
-	}
-	
-	public void setColor(int color, boolean updateRgbInput, boolean updateHsvInput) {
-		updatingColor = true;
-//		Minimap.log("Set Color: " + Integer.toHexString(color));
+		this.red = color >> 16 & 0xFF;
+		this.green = color >> 8 & 0xFF;
+		this.blue = color & 0xFF;
 		
-		int r = color >> 16 & 0xFF;
-		int g = color >>  8 & 0xFF;
-		int b = color >>  0 & 0xFF;
+		Color.RGBtoHSB(red, green, blue, hsb);
 		
-		Color.RGBtoHSB(r, g, b, hsb);
-		
-		this.color = color;
-
-		if(updateRgbInput) {
-			textComponentRed.setValue(r);
-			textComponentGreen.setValue(g);
-			textComponentBlue.setValue(b);
-		}
-		if(updateHsvInput) {
-			textComponentHue.setValue((int) (hsb[0] * 360));
-			textComponentSat.setValue((int) (hsb[1] * 100));
-			textComponentVal.setValue((int) (hsb[2] * 100));
-		}
-		onUpdate();
-		updatingColor = false;
+		this.hue = hsb[0];
+		this.saturation = hsb[1];
+		this.brightness = hsb[2];
 	}
 
 	@Override
 	public void onInit() {
 		container = add(new GuiContainerBox());
 		
-		colorElement1 = add(new GuiColorBrightnessSaturationElement1(this));
+		colorElement1 = add(new GuiColorBrightnessSaturationElement(this));
 		colorElement2 = add(new GuiColorHueElement(this));
 		colorPreviewElement = add(new GuiColorPreviewElement(this));
 		
@@ -160,7 +143,43 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		inputSat = add(new GuiTextField(this, textComponentSat));
 		inputVal = add(new GuiTextField(this, textComponentVal));
 		
-		setColor(this.color, true, true);
+		updateColorUiElements(true, true, true, true);
+	}
+	
+	public void setColorFromHSV() {
+		this.color = Color.HSBtoRGB(hue, saturation, brightness);
+		this.red = color >> 16 & 0xFF;
+		this.green = color >> 8 & 0xFF;
+		this.blue = color & 0xFF;
+	}
+	
+	public void setColorFromRGB() {
+		this.red = Utils.clamp(red, 0, 255);
+		this.green = Utils.clamp(green, 0, 255);
+		this.blue = Utils.clamp(blue, 0, 255);
+		this.color = red << 16 | green << 8 | blue;
+		Color.RGBtoHSB(red, green, blue, hsb);
+		this.hue = hsb[0];
+		this.saturation = hsb[1];
+		this.brightness = hsb[2];
+	}
+	
+	public void updateColorUiElements(boolean updateRgbInput, boolean updateHsvInput, boolean updateBrightnessSaturationPicker, boolean updateHuePicker) {
+		updatingColor = true;
+		if(updateRgbInput) {
+			textComponentRed.setValue(red);
+			textComponentGreen.setValue(green);
+			textComponentBlue.setValue(blue);
+		}
+		if(updateHsvInput) {
+			textComponentHue.setValue((int) (hue * 360));
+			textComponentSat.setValue((int) (saturation * 100));
+			textComponentVal.setValue((int) (brightness * 100));
+		}
+		if(updateBrightnessSaturationPicker || updateHuePicker) {
+			updateColorPickerTextures();
+		}
+		updatingColor = false;
 	}
 	
 	@Override
@@ -195,21 +214,21 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		int lineHeightPad = lineHeight + 1;
 		int w1 = size1 - lineHeight - paddingInner; // Text field width
 		
-		textRed.setPosition(x1, y1 + 0 * lineHeightPad).setSize(lineHeight, lineHeight);
-		textGreen.setPosition(x1, y1 + 1 * lineHeightPad).setSize(lineHeight, lineHeight);
-		textBlue.setPosition(x1, y1 + 2 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textHue.setPosition(x1, y1 + 0 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textSat.setPosition(x1, y1 + 1 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textVal.setPosition(x1, y1 + 2 * lineHeightPad).setSize(lineHeight, lineHeight);
 		
-		inputRed.setPosition(x1 + lineHeight + paddingInner, y1 + 0 * lineHeightPad).setSize(w1, lineHeight);
-		inputGreen.setPosition(x1 + lineHeight + paddingInner, y1 + 1 * lineHeightPad).setSize(w1, lineHeight);
-		inputBlue.setPosition(x1 + lineHeight + paddingInner, y1 + 2 * lineHeightPad).setSize(w1, lineHeight);
+		inputHue.setPosition(x1 + lineHeight + paddingInner, y1 + 0 * lineHeightPad).setSize(w1, lineHeight);
+		inputSat.setPosition(x1 + lineHeight + paddingInner, y1 + 1 * lineHeightPad).setSize(w1, lineHeight);
+		inputVal.setPosition(x1 + lineHeight + paddingInner, y1 + 2 * lineHeightPad).setSize(w1, lineHeight);
 		
-		textHue.setPosition(x1, y1 + 4 * lineHeightPad).setSize(lineHeight, lineHeight);
-		textSat.setPosition(x1, y1 + 5 * lineHeightPad).setSize(lineHeight, lineHeight);
-		textVal.setPosition(x1, y1 + 6 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textRed.setPosition(x1, y1 + 4 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textGreen.setPosition(x1, y1 + 5 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textBlue.setPosition(x1, y1 + 6 * lineHeightPad).setSize(lineHeight, lineHeight);
 		
-		inputHue.setPosition(x1 + lineHeight + paddingInner, y1 + 4 * lineHeightPad).setSize(w1, lineHeight);
-		inputSat.setPosition(x1 + lineHeight + paddingInner, y1 + 5 * lineHeightPad).setSize(w1, lineHeight);
-		inputVal.setPosition(x1 + lineHeight + paddingInner, y1 + 6 * lineHeightPad).setSize(w1, lineHeight);
+		inputRed.setPosition(x1 + lineHeight + paddingInner, y1 + 4 * lineHeightPad).setSize(w1, lineHeight);
+		inputGreen.setPosition(x1 + lineHeight + paddingInner, y1 + 5 * lineHeightPad).setSize(w1, lineHeight);
+		inputBlue.setPosition(x1 + lineHeight + paddingInner, y1 + 6 * lineHeightPad).setSize(w1, lineHeight);
 		
 		super.onResize();
 	}
@@ -233,7 +252,7 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		deleteTextures();
 	}
 	
-	public void onUpdate() {
+	public void updateColorPickerTextures() {
 		if(colorPickerTexture1 == 0 || colorPickerTexture2 == 0) {
 			Minimap.log("Cannot update gradient texture because texture doesnt exist!");
 			return;
@@ -244,10 +263,9 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		final int size1 = res * res * 4;
 		final int size2 = 256 * 4;
 		final int sizeTotal = size1 + size2;
-		ByteBuffer buffer = Minimap.instance.minecraftHelper.getBufferWithCapacity(sizeTotal);
+		ByteBuffer buffer = minimap.minecraftHelper.getBufferWithCapacity(sizeTotal);
 		
 		buffer.position(0).limit(size1);
-		float hue = hsb[0];
 		for(int i=0; i < res; i++) {
 			float brightness = 1.0f - i / resMinus1;
 			for(int j=0; j < res; j++) {
@@ -359,15 +377,29 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		
 		public abstract void updateColor(int mouseX, int mouseY);
 		
-		
 	}
 	
-	public static class GuiColorBrightnessSaturationElement1 extends GuiColorElement {
+	public static class GuiColorBrightnessSaturationElement extends GuiColorElement {
 
-		public GuiColorBrightnessSaturationElement1(GuiColorSelectScreen screen) {
+		public GuiColorBrightnessSaturationElement(GuiColorSelectScreen screen) {
 			super(screen);
 		}
-
+		
+		@Override
+		public void draw(float partialTicks) {
+			super.draw(partialTicks);
+			
+			int selectionX = (int) (posX + screen.saturation * (width - 1));
+			int selectionY = (int) (posY + (1.0f - screen.brightness) * (height - 1));
+			
+			glDisable(GL_TEXTURE_2D);
+			utils.drawRectangle(selectionX, selectionY, 1, 1, 0xFFFFFFFF);
+			utils.drawRectangle(selectionX-1, selectionY, 1, 1, 0xFF000000);
+			utils.drawRectangle(selectionX+1, selectionY, 1, 1, 0xFF000000);
+			utils.drawRectangle(selectionX, selectionY-1, 1, 1, 0xFF000000);
+			utils.drawRectangle(selectionX, selectionY+1, 1, 1, 0xFF000000);
+		}
+		
 		@Override
 		public int getTexture() {
 			return screen.colorPickerTexture1;
@@ -375,15 +407,10 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 
 		@Override
 		public void updateColor(int mouseX, int mouseY) {
-			float hue = screen.hsb[0];
-			float sat = Utils.clamp((mouseX - posX) / (float) width, 0.0f, 1.0f);
-			float val = 1.0f - Utils.clamp((mouseY - posY) / (float) height, 0.0f, 1.0f);
-			screen.setColor(Color.HSBtoRGB(hue, sat, val), true, true);
-		}
-		
-		@Override
-		public void draw(float partialTicks) {
-			super.draw(partialTicks);
+			screen.saturation = Utils.clamp((mouseX - posX) / (float) width, 0.0f, 1.0f);
+			screen.brightness = 1.0f - Utils.clamp((mouseY - posY) / (float) height, 0.0f, 1.0f);
+			screen.setColorFromHSV();
+			screen.updateColorUiElements(true, true, false, true);
 		}
 		
 	}
@@ -393,6 +420,16 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		public GuiColorHueElement(GuiColorSelectScreen screen) {
 			super(screen);
 		}
+		
+		@Override
+		public void draw(float partialTicks) {
+			super.draw(partialTicks);
+			
+			int selectionY = (int) (posY + (1.0f - screen.hue) * (height - 1));
+			
+			glDisable(GL_TEXTURE_2D);
+			utils.drawRectangle(posX, selectionY, width, 1, 0xFF000000);
+		}
 
 		@Override
 		public int getTexture() {
@@ -401,10 +438,9 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 
 		@Override
 		public void updateColor(int mouseX, int mouseY) {
-			float hue = 1.0f - Utils.clamp((mouseY - posY) / (float) height, 0.0f, 1.0f);
-			float sat = screen.hsb[1];
-			float val = screen.hsb[2];
-			screen.setColor(Color.HSBtoRGB(hue, sat, val), true, true);
+			screen.hue = 1.0f - Utils.clamp((mouseY - posY) / (float) height, 0.0f, 1.0f);
+			screen.setColorFromHSV();
+			screen.updateColorUiElements(true, true, true, false);
 		}
 		
 	}
@@ -432,25 +468,38 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		if(updatingColor) {
 			return;
 		}
-		if(textComponent == textComponentRed || textComponent == textComponentGreen || textComponent == textComponentBlue) {
-			Minimap.log("RGB Changed");
-			
-			int r = textComponentRed.getValue() & 0xFF;
-			int g = textComponentGreen.getValue() & 0xFF;
-			int b = textComponentBlue.getValue() & 0xFF;
-			
-			setColor(r << 16 | g << 8 | b, false, true);
+		
+		if(textComponent == textComponentRed) {
+			this.red = textComponentRed.getValue();
+			setColorFromRGB();
+			updateColorUiElements(false, true, true, true);
 		}
-		if(textComponent == textComponentHue || textComponent == textComponentSat || textComponent == textComponentVal) {
-			Minimap.log("HSV Changed");
-			
-			float h = textComponentHue.getValue() / 360.0f;
-			float s = textComponentSat.getValue() / 100.0f;
-			float v = textComponentVal.getValue() / 100.0f;
-			
-			setColor(Color.HSBtoRGB(h, s, v), true, false);
+		if(textComponent == textComponentGreen) {
+			this.green = textComponentGreen.getValue();
+			setColorFromRGB();
+			updateColorUiElements(false, true, true, true);
+		}
+		if(textComponent == textComponentBlue) {
+			this.blue = textComponentBlue.getValue();
+			setColorFromRGB();
+			updateColorUiElements(false, true, true, true);
 		}
 		
+		if(textComponent == textComponentHue) {
+			this.hue = textComponentHue.getValue() / 360.0f;
+			setColorFromHSV();
+			updateColorUiElements(true, false, true, true);
+		}
+		if(textComponent == textComponentSat) {
+			this.saturation = textComponentSat.getValue() / 100.0f;
+			setColorFromHSV();
+			updateColorUiElements(true, false, true, true);
+		}
+		if(textComponent == textComponentVal) {
+			this.brightness = textComponentVal.getValue() / 100.0f;
+			setColorFromHSV();
+			updateColorUiElements(true, false, true, true);
+		}
 	}
 
 }

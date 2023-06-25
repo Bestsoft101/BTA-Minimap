@@ -97,7 +97,7 @@ public class GuiScrollableContainer extends GuiContainerBox {
 	}
 	
 	@Override
-	public void onScroll(int dir, int mouseX, int mouseY) {
+	public void scrollEvent(int dir, int mouseX, int mouseY) {
 		dir = Utils.clamp(dir, -1, 1);
 		
 		if(dir < 0) {
@@ -108,7 +108,7 @@ public class GuiScrollableContainer extends GuiContainerBox {
 			scroll(-1);
 			throw new CancelEventException();
 		}
-		super.onScroll(dir, mouseX, mouseY);
+		super.scrollEvent(dir, mouseX, mouseY);
 	}
 	
 	public void scroll(int dir) {

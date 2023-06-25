@@ -1,10 +1,11 @@
-package b100.minimap.mc;
+package b100.minimap.mc.impl;
 
-import net.minecraft.src.EntityPlayer;
+import b100.minimap.mc.Player;
+import net.minecraft.src.EntityPlayerSP;
 
 public class PlayerWrapper implements Player {
 	
-	public EntityPlayer player;
+	public EntityPlayerSP player;
 
 	@Override
 	public double getRotationYaw() {
@@ -29,6 +30,19 @@ public class PlayerWrapper implements Player {
 	@Override
 	public double getPosZ(float partialTicks) {
 		return player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+	}
+
+	@Override
+	public void teleportTo(int x, int y, int z) {
+		double x1 = x + 0.5;
+		double y1 = (y - 1) + player.yOffset + 0.01f;
+		double z1 = z + 0.5;
+		
+		if(player.worldObj.isMultiplayerAndNotHost) {
+			player.sendChatMessage("/tp "+player.username+" "+x1+" "+y1+" "+z1);
+		}else {
+			player.setPosition(x1, y1, z1);
+		}
 	}
 
 }

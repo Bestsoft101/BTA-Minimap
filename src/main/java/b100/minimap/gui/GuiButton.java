@@ -87,8 +87,19 @@ public class GuiButton extends GuiElement {
 		return this;
 	}
 	
+	public GuiButton setClickable(boolean clickable) {
+		this.clickable = clickable;
+		return this;
+	}
+	
 	public void setText(String text) {
 		this.text = text;
 	}
+	
+	@Override
+	public boolean isSolid() {
+		return clickable;
+	}
+	
 
 }

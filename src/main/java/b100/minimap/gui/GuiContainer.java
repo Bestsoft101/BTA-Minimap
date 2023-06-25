@@ -13,6 +13,7 @@ public class GuiContainer extends GuiElement {
 	
 	public <E extends GuiElement> E add(E element) {
 		elements.add(element);
+		element.onAddToContainer(this);
 		return element;
 	}
 	
@@ -38,9 +39,9 @@ public class GuiContainer extends GuiElement {
 	}
 	
 	@Override
-	public void onScroll(int dir, int mouseX, int mouseY) {
+	public void scrollEvent(int dir, int mouseX, int mouseY) {
 		for(int i=0; i < elements.size(); i++) {
-			elements.get(i).onScroll(dir, mouseX, mouseY);
+			elements.get(i).scrollEvent(dir, mouseX, mouseY);
 		}
 	}
 
@@ -66,6 +67,22 @@ public class GuiContainer extends GuiElement {
 			}
 		}
 		return null;
+	}
+	
+	public boolean containsElement(GuiElement element) {
+		for(int i=0; i < elements.size(); i++) {
+			GuiElement e = elements.get(i);
+			if(e == element) {
+				return true;
+			}
+			if(e instanceof GuiContainer) {
+				GuiContainer container = (GuiContainer) e;
+				if(container.containsElement(element)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 }

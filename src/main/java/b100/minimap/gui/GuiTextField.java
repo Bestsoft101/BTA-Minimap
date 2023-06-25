@@ -52,6 +52,13 @@ public class GuiTextField extends GuiElement {
 		}
 	}
 	
+	@Override
+	public void scrollEvent(int dir, int mouseX, int mouseY) {
+		textComponent.scrollEvent(dir);
+		
+		super.scrollEvent(dir, mouseX, mouseY);
+	}
+	
 	public int getBackgroundColor() {
 		return textComponent.focused ? Colors.buttonBackgroundHover : Colors.buttonBackground;
 	}

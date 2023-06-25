@@ -1,14 +1,15 @@
 package b100.minimap.gui.waypoint;
 
-import b100.minimap.Minimap;
+import org.lwjgl.input.Keyboard;
+
+import b100.minimap.gui.ColorListener;
 import b100.minimap.gui.GuiButton;
 import b100.minimap.gui.GuiButtonNavigation;
+import b100.minimap.gui.GuiColorSelectScreen;
 import b100.minimap.gui.GuiContainerBox;
 import b100.minimap.gui.GuiElement;
 import b100.minimap.gui.GuiNavigationContainer;
 import b100.minimap.gui.GuiNavigationContainer.Position;
-import b100.minimap.gui.color.ColorListener;
-import b100.minimap.gui.color.GuiColorSelectScreen;
 import b100.minimap.gui.GuiScreen;
 import b100.minimap.gui.GuiTextComponent;
 import b100.minimap.gui.GuiTextComponentInteger;
@@ -59,7 +60,7 @@ public abstract class GuiEditWaypointBase extends GuiScreen implements TextCompo
 	}
 	
 	public void setPlayerOffset() {
-		Player player = Minimap.instance.minecraftHelper.getThePlayer();
+		Player player = minimap.minecraftHelper.getThePlayer();
 		
 		this.playerOffsetX = MathHelper.floor_double(player.getPosX(1.0f));
 		this.playerOffsetY = MathHelper.floor_double(player.getPosY(1.0f));
@@ -145,6 +146,14 @@ public abstract class GuiEditWaypointBase extends GuiScreen implements TextCompo
 		colorButton.setPosition(colorBoxX, offsetBoxY + lineHeightPad).setSize(colorBoxWidth, colorBoxWidth);
 		
 		super.onResize();
+	}
+	
+	@Override
+	public void keyEvent(int key, char c, boolean pressed, boolean repeat, int mouseX, int mouseY) {
+		if(key == Keyboard.KEY_RETURN) {
+			ok();
+		}
+		super.keyEvent(key, c, pressed, repeat, mouseX, mouseY);
 	}
 	
 	@Override

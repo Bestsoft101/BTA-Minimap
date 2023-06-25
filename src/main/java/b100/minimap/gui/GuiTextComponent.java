@@ -1,7 +1,24 @@
 package b100.minimap.gui;
 
-import static org.lwjgl.input.Keyboard.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.input.Keyboard.KEY_A;
+import static org.lwjgl.input.Keyboard.KEY_BACK;
+import static org.lwjgl.input.Keyboard.KEY_C;
+import static org.lwjgl.input.Keyboard.KEY_DELETE;
+import static org.lwjgl.input.Keyboard.KEY_END;
+import static org.lwjgl.input.Keyboard.KEY_HOME;
+import static org.lwjgl.input.Keyboard.KEY_LCONTROL;
+import static org.lwjgl.input.Keyboard.KEY_LEFT;
+import static org.lwjgl.input.Keyboard.KEY_LSHIFT;
+import static org.lwjgl.input.Keyboard.KEY_RCONTROL;
+import static org.lwjgl.input.Keyboard.KEY_RIGHT;
+import static org.lwjgl.input.Keyboard.KEY_RSHIFT;
+import static org.lwjgl.input.Keyboard.KEY_V;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_DST_COLOR;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_COLOR;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,12 +93,12 @@ public class GuiTextComponent extends GuiLabel {
 				if(cursorPosition == text.length()) {
 					int offset = utils.getStringWidth(text);
 					
-					utils.drawString("_", posX + offset, posY, 0xFFFFFFFF);
+					utils.drawString("_", posX + offset, posY, textColor);
 				}else {
 					int offset = utils.getStringWidth(text.substring(0, cursorPosition));
 					
 					glDisable(GL_TEXTURE_2D);
-					utils.drawRectangle(this.posX + offset, posY - 1, 1, 10, 0xFFFFFFFF);
+					utils.drawRectangle(this.posX + offset, posY - 1, 1, 10, textColor);
 				}
 			}
 		}
@@ -97,6 +114,44 @@ public class GuiTextComponent extends GuiLabel {
 
 		if(!isTextSelected() && shift) textSelection = cursorPosition;
 		
+		if(control) {
+			if(key == KEY_A) {
+				textSelection = 0;
+				cursorPosition = text.length();
+				onUpdate();
+				throw new CancelEventException();
+			}
+			if(key == KEY_C) {
+				String stringToCopy = text;
+				if(isTextSelected()) {
+					stringToCopy = text.substring(getSelectionStart(), getSelectionEnd());
+				}
+				Utils.copyStringToClipboard(stringToCopy);
+				throw new CancelEventException();
+			}
+			if(key == KEY_V) {
+				String clipboardString = Utils.getClipboardString();
+				if(clipboardString != null && clipboardString.length() > 0) {
+					StringBuilder stringBuilder = new StringBuilder();
+					for(int i=0; i < clipboardString.length(); i++) {
+						char c1 = clipboardString.charAt(i);
+						if(isCharacterAllowed(c1)) {
+							stringBuilder.append(c1);
+						}
+					}
+					clipboardString = stringBuilder.toString();
+					if(clipboardString.length() > 0) {
+						if(isTextSelected()) {
+							text = text.substring(0, getSelectionStart()) + clipboardString + text.substring(getSelectionEnd());
+						}else {
+							text = text.substring(0, cursorPosition) + clipboardString + text.substring(cursorPosition);
+						}
+						onUpdate();
+					}
+				}
+				throw new CancelEventException();
+			}
+		}
 		if(key == KEY_BACK) {
 			if(isTextSelected()) {
 				int i = getSelectionStart();
@@ -169,7 +224,7 @@ public class GuiTextComponent extends GuiLabel {
 			if(isTextSelected() && textSelection != cursorPosition) {
 				int i = getSelectionStart();
 				text = text.substring(0, getSelectionStart()) + c + text.substring(getSelectionEnd());
-				cursorPosition = i;
+				cursorPosition = i + 1;
 				textSelection = -1;
 			}else {
 				text = text.substring(0, cursorPosition) + c + text.substring(cursorPosition);
@@ -179,6 +234,10 @@ public class GuiTextComponent extends GuiLabel {
 			onUpdate();
 			throw new CancelEventException();
 		}
+	}
+	
+	public void scrollEvent(int direction) {
+		
 	}
 	
 	public int getNextWordStartPosition(int start, int dir) {

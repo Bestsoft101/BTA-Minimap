@@ -16,9 +16,9 @@ import b100.minimap.gui.GuiScreen;
 import b100.minimap.gui.IGuiUtils;
 import b100.minimap.gui.waypoint.GuiCreateWaypoint;
 import b100.minimap.gui.waypoint.GuiWaypoints;
-import b100.minimap.mc.GuiUtilsImpl;
 import b100.minimap.mc.IMinecraftHelper;
-import b100.minimap.mc.MinecraftHelperImpl;
+import b100.minimap.mc.impl.GuiUtilsImpl;
+import b100.minimap.mc.impl.MinecraftHelperImpl;
 import b100.minimap.render.MapRender;
 import b100.minimap.render.block.BlockRenderManager;
 import b100.minimap.render.block.TileColors;
@@ -201,6 +201,11 @@ public class Minimap {
 	public void onWorldChange(World newWorld) {
 		log("World Changed!");
 		
+		if(this.worldData != null) {
+			this.worldData.save();
+			this.worldData = null;
+		}
+		
 		this.theWorld = newWorld;
 		
 		minecraftHelper.onWorldChanged(newWorld);
@@ -208,11 +213,8 @@ public class Minimap {
 		if(theWorld != null) {
 			this.worldData = worldDataManager.getWorldData(theWorld);
 			this.worldData.load();
-			log("World Data Directory: " + this.worldData.directory.getAbsolutePath());
 			
 			mapRender.onWorldChange(newWorld);
-		}else {
-			this.worldData = null;
 		}
 		
 		saveConfig();

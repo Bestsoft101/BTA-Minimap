@@ -1,19 +1,24 @@
 package b100.minimap.gui.waypoint;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
 
+import b100.minimap.Minimap;
 import b100.minimap.gui.Colors;
 import b100.minimap.gui.GuiButton;
-import b100.minimap.gui.GuiScreen;
+import b100.minimap.gui.GuiContextMenu;
 import b100.minimap.waypoint.Waypoint;
 
 public class GuiWaypointButton extends GuiButton {
 
+	public GuiWaypoints guiWaypoints;
 	public Waypoint waypoint;
 	
-	public GuiWaypointButton(GuiScreen screen, Waypoint waypoint) {
+	public GuiWaypointButton(GuiWaypoints screen, Waypoint waypoint) {
 		super(screen);
 		
+		this.guiWaypoints = screen;
 		this.waypoint = waypoint;
 	}
 	
@@ -38,13 +43,45 @@ public class GuiWaypointButton extends GuiButton {
 	@Override
 	public void onClick(int button) {
 		if(button == 1) {
-			utils.displayGui(new GuiEditWaypoint(screen, waypoint));	
+			GuiContextMenu contextMenu = new GuiContextMenu(screen);
+			
+			contextMenu.addContextMenuElement(new GuiButton(screen, "Edit").addActionListener((e) -> edit()));
+			contextMenu.addContextMenuElement(new GuiButton(screen, "Teleport").addActionListener((e) -> teleport()).setClickable(minecraftHelper.getEnableCheats()));
+			contextMenu.addContextMenuElement(new GuiButton(screen, "Share").addActionListener((e) -> share()).setClickable(false));
+			contextMenu.addContextMenuElement(new GuiButton(screen, "Delete").addActionListener((e) -> delete()));
+			
+			screen.add(contextMenu);
 		}else {
 			waypoint.visible = !waypoint.visible;
 		}
 		
 		
 		super.onClick(button);
+	}
+	
+	public void edit() {
+		utils.displayGui(new GuiEditWaypoint(screen, waypoint));
+	}
+	
+	public void teleport() {
+		if(minimap.minecraftHelper.getEnableCheats()) {
+			minimap.minecraftHelper.getThePlayer().teleportTo(waypoint.x, waypoint.y, waypoint.z);
+		}
+		utils.displayGui(null);
+	}
+	
+	public void share() {
+		// TODO
+	}
+	
+	public void delete() {
+		if(minimap.worldData.remove(waypoint)) {
+			Minimap.log("Waypoint deleted: "+waypoint.name);
+			
+			guiWaypoints.init();
+		}else {
+			Minimap.log("Could not remove waypoint!");
+		}
 	}
 
 }

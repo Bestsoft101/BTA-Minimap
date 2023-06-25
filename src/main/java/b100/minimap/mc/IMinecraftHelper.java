@@ -61,4 +61,12 @@ public interface IMinecraftHelper {
 	
 	public void setupBlockRenderTypes(BlockRenderManager blockRenderManager);
 	
+	public boolean getEnableCheats();
+	
+	public IDimension getDimension(String id);
+	
+	public IDimension getDimensionFromWorld(World world);
+	
+	public IDimension getDefaultDimension(World world);
+	
 }

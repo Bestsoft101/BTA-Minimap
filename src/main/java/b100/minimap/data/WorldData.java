@@ -4,31 +4,46 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import b100.json.element.JsonArray;
+import b100.json.element.JsonElement;
 import b100.json.element.JsonEntry;
 import b100.json.element.JsonObject;
 import b100.minimap.Minimap;
+import b100.minimap.mc.IDimension;
 import b100.minimap.waypoint.Waypoint;
 import b100.utils.StringReader;
 import b100.utils.StringUtils;
+import net.minecraft.src.World;
 
 public class WorldData {
 	
 	public File directory;
+	public World world;
+	public IDimension dimension;
 	
-	public List<Waypoint> waypoints = new ArrayList<>();
+	private List<Waypoint> waypoints = new ArrayList<>();
 	
-	public WorldData(File directory) {
+	private boolean savingAll = false;
+	
+	public WorldData(File directory, World world) {
 		this.directory = directory;
+		this.world = world;
+		this.dimension = Minimap.instance.minecraftHelper.getDimensionFromWorld(world);
 	}
 	
 	public void load() {
+		Minimap.log("Loading world data: '"+directory.getAbsolutePath()+"'");
+		
 		loadWaypoints();
 	}
 	
 	public void save() {
+		Minimap.log("Saving world data: '"+directory.getAbsolutePath()+"'");
+		savingAll = true;
 		directory.mkdirs();
 		
 		saveWaypoints();
+		savingAll = false;
 	}
 	
 	public void loadWaypoints() {
@@ -39,8 +54,20 @@ public class WorldData {
 		if(waypointsFile.exists()) {
 			try {
 				JsonObject jsonObject = new JsonObject(new StringReader(StringUtils.getFileContentAsString(waypointsFile)));
+				JsonArray jsonArray = jsonObject.getArray("waypoints");
+				if(jsonArray != null) {
+					for(JsonElement element : jsonArray) {
+						waypoints.add(new Waypoint(this, element.getAsObject()));
+					}	
+				}
+				
+				// Legacy
 				for(JsonEntry entry : jsonObject) {
-					waypoints.add(new Waypoint(entry.name, entry.value.getAsObject()));
+					if(entry.value.isObject()) {
+						JsonObject obj = entry.value.getAsObject();
+						obj.set("name", entry.name);
+						waypoints.add(new Waypoint(this, obj));
+					}
 				}
 			}catch (Exception e) {
 				throw new RuntimeException("Could not load waypoints from '"+waypointsFile.getAbsolutePath()+"'", e);
@@ -57,13 +84,30 @@ public class WorldData {
 		if(waypointsFileOld.exists()) waypointsFileOld.delete();
 		if(waypointsFile.exists()) waypointsFile.renameTo(waypointsFileOld);
 		
-		JsonObject root = new JsonObject();
-		for(Waypoint waypoint : waypoints) {
-			root.set(waypoint.name, waypoint.toJson());
+		JsonArray array = new JsonArray(waypoints.size());
+		for(int i=0; i < waypoints.size(); i++) {
+			array.set(i, waypoints.get(i).toJson());
 		}
 		
+		JsonObject root = new JsonObject();
+		root.set("waypoints", array);
+		
 		StringUtils.saveStringToFile(waypointsFile, root.toString());
-		Minimap.log("Saved waypoints to '" + waypointsFile.getAbsolutePath() + "'");
+		if(!savingAll) {
+			Minimap.log("Saved waypoints to '" + waypointsFile.getAbsolutePath() + "'");
+		}
+	}
+	
+	public void addWaypoint(Waypoint waypoint) {
+		this.waypoints.add(waypoint);
+	}
+	
+	public boolean remove(Waypoint waypoint) {
+		return this.waypoints.remove(waypoint);
+	}
+	
+	public List<Waypoint> getWaypoints() {
+		return waypoints;
 	}
 
 }

@@ -1,4 +1,4 @@
-package b100.minimap.mc;
+package b100.minimap.mc.impl;
 
 import java.util.ArrayList;
 import java.util.List;

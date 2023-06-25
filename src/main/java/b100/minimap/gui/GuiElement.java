@@ -21,11 +21,15 @@ public abstract class GuiElement extends Gui {
 		
 	}
 	
-	public void onScroll(int dir, int mouseX, int mouseY) {
+	public void scrollEvent(int dir, int mouseX, int mouseY) {
 		
 	}
 
 	public void onResize() {
+		
+	}
+	
+	public void onAddToContainer(GuiContainer container) {
 		
 	}
 	

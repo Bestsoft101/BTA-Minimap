@@ -13,6 +13,7 @@ import java.util.Map;
 
 import b100.minimap.Minimap;
 import b100.minimap.config.MapConfig;
+import b100.minimap.mc.IDimension;
 import b100.minimap.mc.Player;
 import b100.minimap.render.style.MapStyle;
 import b100.minimap.waypoint.Waypoint;
@@ -79,18 +80,6 @@ public class MapRender implements WorldListener {
 		
 		maskTexture = minimap.minecraftHelper.generateTexture();
 		mapTexture = minimap.minecraftHelper.generateTexture();
-		
-		glBindTexture(GL_TEXTURE_2D, maskTexture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		
-		int sphereTextureSize = 1024;
-		ByteBuffer buffer = ByteBuffer.allocateDirect(sphereTextureSize * sphereTextureSize * 4);
-		generateSphereTexture(buffer, sphereTextureSize, sphereTextureSize, 0x0, 0xFFFFFFFF);
-		buffer.position(0);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sphereTextureSize, sphereTextureSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 	}
 	
 	public void setStyle(MapStyle style) {
@@ -337,7 +326,7 @@ public class MapRender implements WorldListener {
 			return;
 		}
 		
-		List<Waypoint> waypoints = Minimap.instance.worldData.waypoints;
+		List<Waypoint> waypoints = Minimap.instance.worldData.getWaypoints();
 		if(waypoints.size() == 0) {
 			return;
 		}
@@ -348,17 +337,18 @@ public class MapRender implements WorldListener {
 		glBindTexture(GL_TEXTURE_2D, waypointTex);
 		int currentTex = waypointTex;
 		
+		IDimension currentDimension = minimap.worldData.dimension;
 		for(int i=0; i < waypoints.size(); i++) {
 			Waypoint waypoint = waypoints.get(i);
-			if(!waypoint.visible) {
+			if(!waypoint.visible || waypoint.dimension != currentDimension) {
 				continue;
 			}
 			
 			// Casted to int match map exactly
-			double offsetX = waypoint.x * zoom - (int) (playerPosX * zoom);
-			double offsetZ = waypoint.z * zoom - (int) (playerPosZ * zoom);
+			double offsetX = (waypoint.x + 0.5) * zoom - (int) (playerPosX * zoom);
+			double offsetZ = (waypoint.z + 0.5) * zoom - (int) (playerPosZ * zoom);
 			
-			// Used to render way
+			// Used to render waypoints that are outside the visible map, no int cast for very smooth movement
 			double offsetXSmooth = waypoint.x - playerPosX;
 			double offsetZSmooth = waypoint.z - playerPosZ;
 			
@@ -409,8 +399,6 @@ public class MapRender implements WorldListener {
 				}
 			}else {
 				isOnMap = x >= mapPosX + border && y >= mapPosY + border && x < mapPosX + mapWidth - border && y < mapPosY + mapHeight - border;
-//				isOnMap = true;
-				
 				
 				if(!isOnMap) {
 					double offXAbs = Math.abs(offsetXSmooth);
@@ -584,33 +572,6 @@ public class MapRender implements WorldListener {
 		
 		while(renderChunksUsed.size() > 0) {
 			setChunkNotInUse(renderChunksUsed.remove(0));
-		}
-	}
-	
-	public void generateSphereTexture(ByteBuffer buffer, int width, int height, int insideColor, int outsideColor) {
-		int centerX = width / 2;
-		int centerY = height / 2;
-		
-		for(int i=0; i < height; i++) {
-			for(int j=0; j < width; j++) {
-				float distance = distance(j, i, centerX, centerY);
-				
-				int color = insideColor;
-				
-				if(distance > width / 2 - 1) {
-					color = outsideColor;
-				}
-				
-				byte a = (byte) (color >> 24);
-				byte r = (byte) (color >> 16);
-				byte g = (byte) (color >>  8);
-				byte b = (byte) (color >>  0);
-				
-				buffer.put(b);
-				buffer.put(g);
-				buffer.put(r);
-				buffer.put(a);
-			}
 		}
 	}
 

@@ -1,13 +1,18 @@
-package b100.minimap.mc;
+package b100.minimap.mc.impl;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import b100.minimap.mc.IDimension;
+import b100.minimap.mc.IMinecraftHelper;
+import b100.minimap.mc.Player;
 import b100.minimap.render.WorldListener;
 import b100.minimap.render.block.BlockRenderManager;
 import b100.minimap.render.block.RenderType;
@@ -15,6 +20,7 @@ import b100.utils.ReflectUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.ChatAllowedCharacters;
+import net.minecraft.src.Dimension;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.GLAllocation;
@@ -34,6 +40,7 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	private Minecraft mc = Minecraft.getMinecraft();
 	private PlayerWrapper playerWrapper = new PlayerWrapper();
 	public WorldAccessImpl worldAccessImpl = new WorldAccessImpl();
+	private Map<Dimension, DimensionWrapper> dimensionWrappers = new HashMap<>();
 	
 	@Override
 	public Minecraft getMinecraftInstance() {
@@ -206,6 +213,39 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 		m.setRenderType(Block.fluidWaterFlowing, RenderType.TRANSPARENT);
 		m.setRenderType(Block.fluidWaterStill, RenderType.TRANSPARENT);
 		m.setRenderType(Block.ice, RenderType.TRANSPARENT);
+	}
+
+	@Override
+	public boolean getEnableCheats() {
+		return mc.theWorld.isMultiplayerAndNotHost || mc.theWorld.getWorldInfo().getCheatsEnabled();
+	}
+
+	public DimensionWrapper getDimensionWrapper(Dimension dimension) {
+		DimensionWrapper wrapper = dimensionWrappers.get(dimension);
+		if(wrapper == null) {
+			wrapper = new DimensionWrapper(dimension);
+			dimensionWrappers.put(dimension, wrapper);
+		}
+		return wrapper;
+	}
+	
+	@Override
+	public IDimension getDimension(String id) {
+		try {
+			return getDimensionWrapper(Dimension.dimensionList[Integer.parseInt(id)]);
+		}catch (NumberFormatException e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public IDimension getDimensionFromWorld(World world) {
+		return getDimensionWrapper(world.dimension);
+	}
+
+	@Override
+	public IDimension getDefaultDimension(World world) {
+		return getDimensionWrapper(Dimension.overworld);
 	}
 
 }
