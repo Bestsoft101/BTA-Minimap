@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
@@ -24,27 +25,43 @@ public class MapStyleCustom implements MapStyle {
 		this.texturePackFile = Minimap.instance.minecraftHelper.getCurrentTexturePackFile();
 	}
 	
-	public InputStream getInputStream(String path) {
+	public InputStream getInternalResource(String path) {
+		InputStream stream = Minimap.class.getResourceAsStream(path);
+		if(stream == null) {
+			throw new NullPointerException("Resource doesn't exist: '"+path+"'!");
+		}
+		return stream;
+	}
+	
+	public InputStream getResource(String path) {
 		if(texturePackFile == null) {
-			InputStream stream = Minimap.class.getResourceAsStream(path);
-			if(stream == null) {
-				throw new NullPointerException("Resource doesn't exist: '"+path+"'!");
-			}
-			return stream;
+			return getInternalResource(path);
 		}
 		try {
 			if(texturePackFile.isDirectory()) {
-				try{
-					return new FileInputStream(new File(texturePackFile, path));
-				}catch (FileNotFoundException e) {
-					throw new RuntimeException(e);
+				File file = new File(texturePackFile, path);
+				if(file.exists()) {
+					try{
+						return new FileInputStream(file);
+					}catch (FileNotFoundException e) {
+						throw new RuntimeException(e);
+					}	
+				}else {
+					return getInternalResource(path);
 				}
 			}else {
 				if(this.zipFile == null) {
 					this.zipFile = new ZipFile(texturePackFile);	
 				}
-				if(path.startsWith("/")) path = path.substring(1);
-				return zipFile.getInputStream(zipFile.getEntry(path));
+				String zipPath = path;
+				if(zipPath.startsWith("/")) {
+					zipPath = zipPath.substring(1);
+				}
+				ZipEntry entry = zipFile.getEntry(zipPath);
+				if(entry == null) {
+					return getInternalResource(path);
+				}
+				return zipFile.getInputStream(entry);
 			}
 		}catch (Exception e) {
 			throw new RuntimeException("Error getting input stream '"+path+"'", e);
@@ -54,7 +71,7 @@ public class MapStyleCustom implements MapStyle {
 	public BufferedImage getImage(String path) {
 		InputStream stream = null;
 		try {
-			stream = getInputStream(path);
+			stream = getResource(path);
 			return ImageIO.read(stream);
 		}catch (Exception e) {
 			throw new RuntimeException("Error reading image: '"+path+"'", e);

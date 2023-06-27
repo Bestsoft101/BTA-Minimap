@@ -6,7 +6,6 @@ import java.util.List;
 
 import b100.json.element.JsonArray;
 import b100.json.element.JsonElement;
-import b100.json.element.JsonEntry;
 import b100.json.element.JsonObject;
 import b100.minimap.Minimap;
 import b100.minimap.mc.IDimension;
@@ -59,15 +58,6 @@ public class WorldData {
 					for(JsonElement element : jsonArray) {
 						waypoints.add(new Waypoint(this, element.getAsObject()));
 					}	
-				}
-				
-				// Legacy
-				for(JsonEntry entry : jsonObject) {
-					if(entry.value.isObject()) {
-						JsonObject obj = entry.value.getAsObject();
-						obj.set("name", entry.name);
-						waypoints.add(new Waypoint(this, obj));
-					}
 				}
 			}catch (Exception e) {
 				throw new RuntimeException("Could not load waypoints from '"+waypointsFile.getAbsolutePath()+"'", e);

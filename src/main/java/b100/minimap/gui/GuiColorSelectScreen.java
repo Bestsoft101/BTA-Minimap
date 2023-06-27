@@ -238,7 +238,6 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		
 		int lineHeight = 10;
 		int lineHeightPad = lineHeight + 1;
-		int w1 = size1 - lineHeight - paddingInner; 	// Text field width
 		
 		textHue.setPosition(x1, y1 + 1 * lineHeightPad).setSize(lineHeight, lineHeight);
 		textSat.setPosition(x1, y1 + 2 * lineHeightPad).setSize(lineHeight, lineHeight);

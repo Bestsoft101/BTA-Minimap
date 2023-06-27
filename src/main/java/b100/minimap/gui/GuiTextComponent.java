@@ -1,24 +1,7 @@
 package b100.minimap.gui;
 
-import static org.lwjgl.input.Keyboard.KEY_A;
-import static org.lwjgl.input.Keyboard.KEY_BACK;
-import static org.lwjgl.input.Keyboard.KEY_C;
-import static org.lwjgl.input.Keyboard.KEY_DELETE;
-import static org.lwjgl.input.Keyboard.KEY_END;
-import static org.lwjgl.input.Keyboard.KEY_HOME;
-import static org.lwjgl.input.Keyboard.KEY_LCONTROL;
-import static org.lwjgl.input.Keyboard.KEY_LEFT;
-import static org.lwjgl.input.Keyboard.KEY_LSHIFT;
-import static org.lwjgl.input.Keyboard.KEY_RCONTROL;
-import static org.lwjgl.input.Keyboard.KEY_RIGHT;
-import static org.lwjgl.input.Keyboard.KEY_RSHIFT;
-import static org.lwjgl.input.Keyboard.KEY_V;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_DST_COLOR;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_COLOR;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.input.Keyboard.*;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.util.ArrayList;
 import java.util.List;

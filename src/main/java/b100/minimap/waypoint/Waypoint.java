@@ -1,6 +1,5 @@
 package b100.minimap.waypoint;
 
-import b100.json.element.JsonElement;
 import b100.json.element.JsonObject;
 import b100.minimap.Minimap;
 import b100.minimap.data.WorldData;
@@ -32,22 +31,11 @@ public class Waypoint {
 		this.x = jsonObject.getInt("x");
 		this.y = jsonObject.getInt("y");
 		this.z = jsonObject.getInt("z");
-		JsonElement element = jsonObject.get("color");
-		if(element.isNumber()) {
-			this.color = jsonObject.getInt("color");
-		}else {
-			this.color = Utils.parseColor(jsonObject.getString("color"));
-		}
+		this.color = Utils.parseColor(jsonObject.getString("color"));
 		this.visible = jsonObject.getBoolean("visible");
-		if(jsonObject.has("dimension")) {
-			this.dimension = Minimap.instance.minecraftHelper.getDimension(jsonObject.getString("dimension"));
-			if(dimension == null) {
-				Minimap.log("Unknown dimension '"+dimension+"' saved in waypoint '"+name+"', using default");
-			}
-		}else {
-			Minimap.log("Waypoint '"+name+"' doesnt have a dimension saved, using default");
-		}
+		this.dimension = Minimap.instance.minecraftHelper.getDimension(jsonObject.getString("dimension"));
 		if(dimension == null) {
+			Minimap.log("Unknown dimension '"+dimension+"' saved in waypoint '"+name+"', using default");
 			dimension = Minimap.instance.minecraftHelper.getDefaultDimension(worldData.world);
 		}
 	}
