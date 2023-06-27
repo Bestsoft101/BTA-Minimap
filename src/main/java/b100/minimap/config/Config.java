@@ -16,7 +16,7 @@ public class Config extends ConfigBase {
 	public BooleanOption mask = new BooleanOption("mask", true);
 	public BooleanOption showTiles = new BooleanOption("showTiles", false);
 
-	public Keybind keyMap = new Keybind("keyMap", Keyboard.KEY_M);
+	public Keybind keyMap = new Keybind("keyMap", Keyboard.KEY_M).setCanBeUnbound(false);
 	public Keybind keyHideMap = new Keybind("keyHideMap", Keyboard.KEY_NONE);
 	public Keybind keyFullscreen = new Keybind("keyFullscreen", Keyboard.KEY_X);
 	public Keybind keyZoomIn = new Keybind("keyZoomIn", Keyboard.KEY_ADD);

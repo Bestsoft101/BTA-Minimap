@@ -168,6 +168,9 @@ public class Minimap {
 	public void updateInput() {
 		for(int i=0; i < config.keyBinds.length; i++) {
 			Keybind key = config.keyBinds[i];
+			if(key.value == Keyboard.KEY_NONE || key.value == Keyboard.KEY_ESCAPE) {
+				continue;
+			}
 			
 			boolean pressed = Keyboard.isKeyDown(key.value);
 			
