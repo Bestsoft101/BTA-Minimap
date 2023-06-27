@@ -23,6 +23,7 @@ import b100.minimap.render.MapRender;
 import b100.minimap.render.block.BlockRenderManager;
 import b100.minimap.render.block.TileColors;
 import b100.minimap.render.style.MapStyle;
+import b100.minimap.render.style.MapStyleCustom;
 import b100.minimap.render.style.MapStyleGenerated;
 import b100.minimap.render.style.MapStyleInternal;
 import net.minecraft.client.Minecraft;
@@ -94,12 +95,14 @@ public class Minimap {
 	
 	public MapStyle getMapStyleFromConfig() {
 		boolean round = config.mapConfig.roundMap.value;
-		int style = config.mapStyle.value;
+		int style = config.mapConfig.mapStyle.value;
 		
 		if(style == 1) return new MapStyleGenerated(round, 0xc22020); // Red
 		if(style == 2) return new MapStyleGenerated(round, 0x22b422); // Green
-		if(style == 3) return new MapStyleInternal("/rei/", round, true);
-		if(style == 4) return new MapStyleInternal("/zan/", round, false);
+		if(style == 3) return new MapStyleGenerated(round, 0x0a0a0a); // Gray
+		if(style == 4) return new MapStyleInternal("/rei/", round, true);
+		if(style == 5) return new MapStyleInternal("/zan/", round, false);
+		if(style == 6) return new MapStyleCustom(round);
 		
 		return new MapStyleGenerated(round, 0x0f39ae); // Blue
 	}
@@ -114,6 +117,7 @@ public class Minimap {
 	
 	public void onReload() {
 		tileColors.createTileColors();
+		updateStyle();
 	}
 	
 	public void onRenderGui(float partialTicks) {

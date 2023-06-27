@@ -1,6 +1,5 @@
 package b100.minimap.gui;
 
-import b100.minimap.config.Config;
 import b100.minimap.config.MapConfig;
 import b100.minimap.config.Option;
 import b100.minimap.gui.GuiNavigationContainer.Position;
@@ -17,19 +16,20 @@ public class GuiConfigMap extends GuiScreen implements OptionListener {
 
 	@Override
 	public void onInit() {
-		Config config = minimap.config;
+		MapConfig config = minimap.config.mapConfig;
 
 		options = add(new GuiOptionsContainer(this));
-		options.add("Fullscreen Map", new GuiOptionButtonBoolean(this, config.mapConfig.fullscreenMap));
-		options.add("Round Map", new GuiOptionButtonBoolean(this, config.mapConfig.roundMap).addOptionListener(this));
-		options.add("Rotate Map", new GuiOptionButtonBoolean(this, config.mapConfig.rotateMap));
-		options.add("Position", new GuiOptionButtonInteger(this, config.mapConfig.position).setScrollingEnabled(false));
-		options.add("Size", new GuiOptionButtonInteger(this, config.mapConfig.width));
-		options.add("Frame Opacity", new GuiOptionButtonInteger(this, config.mapConfig.frameOpacity));
-		options.add("Shade Type", new GuiOptionButtonInteger(this, config.mapConfig.shadeType).setScrollingEnabled(false).addOptionListener(this));
-		options.add("Lighting", new GuiOptionButtonBoolean(this, config.mapConfig.lighting).addOptionListener(this));
-		options.add("Show All Blocks", new GuiOptionButtonBoolean(this, config.mapConfig.renderAllBlocks).addOptionListener(this));
-		options.add("Show Waypoints", new GuiOptionButtonBoolean(this, config.mapConfig.showWaypoints));
+		options.add("Style", new GuiOptionButtonMapStyle(this, config.mapStyle).addOptionListener(this));
+		options.add("Fullscreen Map", new GuiOptionButtonBoolean(this, config.fullscreenMap));
+		options.add("Round Map", new GuiOptionButtonBoolean(this, config.roundMap).addOptionListener(this));
+		options.add("Rotate Map", new GuiOptionButtonBoolean(this, config.rotateMap));
+		options.add("Position", new GuiOptionButtonInteger(this, config.position).setScrollingEnabled(false));
+		options.add("Size", new GuiOptionButtonInteger(this, config.width));
+		options.add("Frame Opacity", new GuiOptionButtonInteger(this, config.frameOpacity));
+		options.add("Shade Type", new GuiOptionButtonInteger(this, config.shadeType).setScrollingEnabled(false).addOptionListener(this));
+		options.add("Lighting", new GuiOptionButtonBoolean(this, config.lighting).addOptionListener(this));
+		options.add("Show All Blocks", new GuiOptionButtonBoolean(this, config.renderAllBlocks).addOptionListener(this));
+		options.add("Show Waypoints", new GuiOptionButtonBoolean(this, config.showWaypoints));
 		
 		navBottom = add(new GuiNavigationContainer(this, options, Position.BOTTOM));
 		navBottom.add(new GuiButtonNavigation(this, "Back", options).addActionListener((e) -> back()));
@@ -44,7 +44,7 @@ public class GuiConfigMap extends GuiScreen implements OptionListener {
 		if(option == mapConfig.shadeType || option == mapConfig.lighting || option == mapConfig.renderAllBlocks) {
 			minimap.mapRender.updateAllTiles();
 		}
-		if(option == mapConfig.roundMap) {
+		if(option == mapConfig.mapStyle || option == mapConfig.roundMap) {
 			minimap.updateStyle();
 		}
 	}

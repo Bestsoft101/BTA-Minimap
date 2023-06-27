@@ -65,6 +65,13 @@ public class GuiWaypoints extends GuiScreen {
 		}		
 	}
 	
+	@Override
+	public void onResize() {
+		waypointsContainer.elementsPerPage = Math.max(10, (height - 140) / (waypointsContainer.elementHeight + 1));
+		
+		super.onResize();
+	}
+	
 	public void createWaypoint() {
 		utils.displayGui(new GuiCreateWaypoint(this));
 	}

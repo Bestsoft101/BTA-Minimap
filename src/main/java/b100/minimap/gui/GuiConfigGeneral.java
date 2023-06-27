@@ -1,11 +1,10 @@
 package b100.minimap.gui;
 
 import b100.minimap.config.Config;
-import b100.minimap.config.Option;
 import b100.minimap.gui.GuiNavigationContainer.Position;
 import b100.minimap.gui.waypoint.GuiWaypoints;
 
-public class GuiConfigGeneral extends GuiScreen implements OptionListener {
+public class GuiConfigGeneral extends GuiScreen {
 
 	public GuiOptionsContainer options;
 	public GuiNavigationContainer navTop;
@@ -21,7 +20,6 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 		
 		options = add(new GuiOptionsContainer(this));
 		options.add("Map Visible", new GuiOptionButtonBoolean(this, config.mapVisible));
-		options.add("Style", new GuiOptionButtonMapStyle(this, config.mapStyle).addOptionListener(this));
 		options.add("Map Config", new GuiButton(this, "->").addActionListener((e) -> utils.displayGui(new GuiConfigMap(this))));
 		options.add("Require Item", new GuiOptionButtonRequireItem(this, config.requireItem));
 		options.add("Update Speed", new GuiOptionButtonInteger(this, config.updateSpeed));
@@ -34,13 +32,6 @@ public class GuiConfigGeneral extends GuiScreen implements OptionListener {
 		
 		navTop = add(new GuiNavigationContainer(this, options, Position.TOP));
 		navTop.add(new GuiButtonNavigation(this, "Minimap Configuration", options));
-	}
-
-	@Override
-	public void onOptionValueChanged(Option<?> option) {
-		if(option == minimap.config.mapStyle) {
-			minimap.updateStyle();
-		}
 	}
 	
 }

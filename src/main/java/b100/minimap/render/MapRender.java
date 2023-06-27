@@ -85,6 +85,7 @@ public class MapRender implements WorldListener {
 	public void setStyle(MapStyle style) {
 		setTextureImage(mapTexture, style.getMapTexture(), style.useLinearFiltering(), false);
 		setTextureImage(maskTexture, style.getMaskTexture(), style.useLinearFiltering(), false);
+		style.closeStreams();
 	}
 	
 	public void renderMap(float partialTicks) {

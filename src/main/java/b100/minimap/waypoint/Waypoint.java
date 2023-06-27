@@ -1,9 +1,11 @@
 package b100.minimap.waypoint;
 
+import b100.json.element.JsonElement;
 import b100.json.element.JsonObject;
 import b100.minimap.Minimap;
 import b100.minimap.data.WorldData;
 import b100.minimap.mc.IDimension;
+import b100.minimap.utils.Utils;
 
 public class Waypoint {
 	
@@ -30,7 +32,12 @@ public class Waypoint {
 		this.x = jsonObject.getInt("x");
 		this.y = jsonObject.getInt("y");
 		this.z = jsonObject.getInt("z");
-		this.color = jsonObject.getInt("color");
+		JsonElement element = jsonObject.get("color");
+		if(element.isNumber()) {
+			this.color = jsonObject.getInt("color");
+		}else {
+			this.color = Utils.parseColor(jsonObject.getString("color"));
+		}
 		this.visible = jsonObject.getBoolean("visible");
 		if(jsonObject.has("dimension")) {
 			this.dimension = Minimap.instance.minecraftHelper.getDimension(jsonObject.getString("dimension"));
@@ -65,7 +72,7 @@ public class Waypoint {
 		jsonObject.set("x", this.x);
 		jsonObject.set("y", this.y);
 		jsonObject.set("z", this.z);
-		jsonObject.set("color", this.color);
+		jsonObject.set("color", Utils.toColorString(color, false));
 		jsonObject.set("visible", this.visible);
 		jsonObject.set("dimension", this.dimension.getId());
 		jsonObject.setCompact(true);

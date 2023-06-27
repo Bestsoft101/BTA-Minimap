@@ -6,7 +6,7 @@ public class GuiTextComponentInteger extends GuiTextComponent {
 	
 	public Integer min;
 	public Integer max;
-	public int value;
+	private int value;
 	private boolean isValid = true;
 	
 	public GuiTextComponentInteger(int value) {
@@ -73,7 +73,7 @@ public class GuiTextComponentInteger extends GuiTextComponent {
 	
 	@Override
 	public int getTextColor() {
-		return isValid ? super.getTextColor() : 0xFF0000;
+		return isValid ? super.getTextColor() : Colors.textInvalid;
 	}
 
 }

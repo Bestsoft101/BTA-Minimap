@@ -105,4 +105,9 @@ public class MapStyleGenerated implements MapStyle {
 		return true;
 	}
 
+	@Override
+	public void closeStreams() {
+		
+	}
+
 }

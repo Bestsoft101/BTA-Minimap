@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapConfig extends ConfigBase {
-	
+
+	public IntegerOption mapStyle = new IntegerOption("mapStyle", 0).setMinMax(0, 6);
 	public IntegerOption width = new IntegerOption("width", 16).setMinMax(1, 100);
 	public IntegerOption position = new IntegerOption("position", 1).setMinMax(0, 3);
 	public IntegerOption shadeType = new IntegerOption("shadeType", 1).setMinMax(0, 1);
@@ -22,6 +23,7 @@ public class MapConfig extends ConfigBase {
 	public List<Option<?>> getAllOptions() {
 		List<Option<?>> options = new ArrayList<>();
 
+		options.add(mapStyle);
 		options.add(width);
 		options.add(position);
 		options.add(shadeType);

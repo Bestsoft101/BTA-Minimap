@@ -63,4 +63,9 @@ public class MapStyleInternal implements MapStyle {
 		return filter;
 	}
 
+	@Override
+	public void closeStreams() {
+		
+	}
+
 }

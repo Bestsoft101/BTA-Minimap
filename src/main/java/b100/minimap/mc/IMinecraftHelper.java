@@ -69,4 +69,6 @@ public interface IMinecraftHelper {
 	
 	public IDimension getDefaultDimension(World world);
 	
+	public File getCurrentTexturePackFile();
+	
 }

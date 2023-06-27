@@ -69,6 +69,8 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 	public GuiTextElement textSat;
 	public GuiTextElement textVal;
 	
+	public GuiTextElement textHex;
+	
 	public GuiTextComponentInteger textComponentRed;
 	public GuiTextComponentInteger textComponentGreen;
 	public GuiTextComponentInteger textComponentBlue;
@@ -77,6 +79,8 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 	public GuiTextComponentInteger textComponentSat;
 	public GuiTextComponentInteger textComponentVal;
 	
+	public GuiTextComponentColor textComponentHex;
+	
 	public GuiTextField inputRed;
 	public GuiTextField inputGreen;
 	public GuiTextField inputBlue;
@@ -84,6 +88,8 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 	public GuiTextField inputHue;
 	public GuiTextField inputSat;
 	public GuiTextField inputVal;
+	
+	public GuiTextField inputHex;
 	
 	private boolean updatingColor = false;
 	
@@ -127,6 +133,8 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		textSat = add(new GuiTextElement("S", Align.CENTER, Align.CENTER));
 		textVal = add(new GuiTextElement("V", Align.CENTER, Align.CENTER));
 		
+		textHex = add(new GuiTextElement("#", Align.CENTER, Align.CENTER));
+		
 		textComponentRed = (GuiTextComponentInteger) new GuiTextComponentInteger(0, 0, 255).addTextComponentListener(this);
 		textComponentGreen = (GuiTextComponentInteger) new GuiTextComponentInteger(0, 0, 255).addTextComponentListener(this);
 		textComponentBlue = (GuiTextComponentInteger) new GuiTextComponentInteger(0, 0, 255).addTextComponentListener(this);
@@ -134,6 +142,8 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		textComponentHue = (GuiTextComponentInteger) new GuiTextComponentInteger(0, 0, 360).addTextComponentListener(this);
 		textComponentSat = (GuiTextComponentInteger) new GuiTextComponentInteger(0, 0, 100).addTextComponentListener(this);
 		textComponentVal = (GuiTextComponentInteger) new GuiTextComponentInteger(0, 0, 100).addTextComponentListener(this);
+		
+		textComponentHex = (GuiTextComponentColor) new GuiTextComponentColor(0, false).addTextComponentListener(this);
 		
 		inputRed = add(new GuiTextField(this, textComponentRed));
 		inputGreen = add(new GuiTextField(this, textComponentGreen));
@@ -143,7 +153,9 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		inputSat = add(new GuiTextField(this, textComponentSat));
 		inputVal = add(new GuiTextField(this, textComponentVal));
 		
-		updateColorUiElements(true, true, true, true);
+		inputHex = add(new GuiTextField(this, textComponentHex));
+		
+		updateColorUiElements(true, true, true, true, true);
 	}
 	
 	public void setColorFromHSV() {
@@ -164,7 +176,17 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		this.brightness = hsb[2];
 	}
 	
-	public void updateColorUiElements(boolean updateRgbInput, boolean updateHsvInput, boolean updateBrightnessSaturationPicker, boolean updateHuePicker) {
+	public void setColorFromARGB() {
+		this.red = this.color >> 16 & 0xFF;
+		this.green = this.color >> 8 & 0xFF;
+		this.blue = this.color & 0xFF;
+		Color.RGBtoHSB(red, green, blue, hsb);
+		this.hue = hsb[0];
+		this.saturation = hsb[1];
+		this.brightness = hsb[2];
+	}
+	
+	public void updateColorUiElements(boolean updateRgbInput, boolean updateHsvInput, boolean updateBrightnessSaturationPicker, boolean updateHuePicker, boolean updateHexInput) {
 		updatingColor = true;
 		if(updateRgbInput) {
 			textComponentRed.setValue(red);
@@ -178,6 +200,9 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		}
 		if(updateBrightnessSaturationPicker || updateHuePicker) {
 			updateColorPickerTextures();
+		}
+		if(updateHexInput) {
+			textComponentHex.setColor(color);
 		}
 		updatingColor = false;
 	}
@@ -206,29 +231,33 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		colorElement2.setPosition(innerPosX + size1 + paddingInner, innerPosY).setSize(size2, size1);
 		
 		int x1 = innerPosX + size1 + size2 + 2 * paddingInner;	// X Position of the right area
+		int x2 = x1 + size1 / 2;								// X Position of the second column in the right area
 		int y1 = innerPosY + size3 + paddingInner;				// Y Position below the color preview
 		
 		colorPreviewElement.setPosition(x1 + (size1 - size3) / 2, innerPosY).setSize(size3, size3);
 		
 		int lineHeight = 10;
 		int lineHeightPad = lineHeight + 1;
-		int w1 = size1 - lineHeight - paddingInner; // Text field width
+		int w1 = size1 - lineHeight - paddingInner; 	// Text field width
 		
-		textHue.setPosition(x1, y1 + 0 * lineHeightPad).setSize(lineHeight, lineHeight);
-		textSat.setPosition(x1, y1 + 1 * lineHeightPad).setSize(lineHeight, lineHeight);
-		textVal.setPosition(x1, y1 + 2 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textHue.setPosition(x1, y1 + 1 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textSat.setPosition(x1, y1 + 2 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textVal.setPosition(x1, y1 + 3 * lineHeightPad).setSize(lineHeight, lineHeight);
 		
-		inputHue.setPosition(x1 + lineHeight + paddingInner, y1 + 0 * lineHeightPad).setSize(w1, lineHeight);
-		inputSat.setPosition(x1 + lineHeight + paddingInner, y1 + 1 * lineHeightPad).setSize(w1, lineHeight);
-		inputVal.setPosition(x1 + lineHeight + paddingInner, y1 + 2 * lineHeightPad).setSize(w1, lineHeight);
+		inputHue.setPosition(x1 + lineHeight + paddingInner, y1 + 1 * lineHeightPad).setSize(32, lineHeight);
+		inputSat.setPosition(x1 + lineHeight + paddingInner, y1 + 2 * lineHeightPad).setSize(32, lineHeight);
+		inputVal.setPosition(x1 + lineHeight + paddingInner, y1 + 3 * lineHeightPad).setSize(32, lineHeight);
 		
-		textRed.setPosition(x1, y1 + 4 * lineHeightPad).setSize(lineHeight, lineHeight);
-		textGreen.setPosition(x1, y1 + 5 * lineHeightPad).setSize(lineHeight, lineHeight);
-		textBlue.setPosition(x1, y1 + 6 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textRed.setPosition(x2, y1 + 1 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textGreen.setPosition(x2, y1 + 2 * lineHeightPad).setSize(lineHeight, lineHeight);
+		textBlue.setPosition(x2, y1 + 3 * lineHeightPad).setSize(lineHeight, lineHeight);
 		
-		inputRed.setPosition(x1 + lineHeight + paddingInner, y1 + 4 * lineHeightPad).setSize(w1, lineHeight);
-		inputGreen.setPosition(x1 + lineHeight + paddingInner, y1 + 5 * lineHeightPad).setSize(w1, lineHeight);
-		inputBlue.setPosition(x1 + lineHeight + paddingInner, y1 + 6 * lineHeightPad).setSize(w1, lineHeight);
+		inputRed.setPosition(x2 + lineHeight + paddingInner, y1 + 1 * lineHeightPad).setSize(32, lineHeight);
+		inputGreen.setPosition(x2 + lineHeight + paddingInner, y1 + 2 * lineHeightPad).setSize(32, lineHeight);
+		inputBlue.setPosition(x2 + lineHeight + paddingInner, y1 + 3 * lineHeightPad).setSize(32, lineHeight);
+		
+		textHex.setPosition(x1, y1 + 5 * lineHeightPad).setSize(lineHeight, lineHeight);
+		inputHex.setPosition(x1 + lineHeight + paddingInner, y1 + 5 * lineHeightPad).setSize(64, lineHeight);
 		
 		super.onResize();
 	}
@@ -410,7 +439,7 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 			screen.saturation = Utils.clamp((mouseX - posX) / (float) width, 0.0f, 1.0f);
 			screen.brightness = 1.0f - Utils.clamp((mouseY - posY) / (float) height, 0.0f, 1.0f);
 			screen.setColorFromHSV();
-			screen.updateColorUiElements(true, true, false, true);
+			screen.updateColorUiElements(true, true, false, true, true);
 		}
 		
 	}
@@ -440,7 +469,7 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		public void updateColor(int mouseX, int mouseY) {
 			screen.hue = 1.0f - Utils.clamp((mouseY - posY) / (float) height, 0.0f, 1.0f);
 			screen.setColorFromHSV();
-			screen.updateColorUiElements(true, true, true, false);
+			screen.updateColorUiElements(true, true, true, false, true);
 		}
 		
 	}
@@ -458,7 +487,7 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 			int heightHalf = height / 2;
 			glDisable(GL_TEXTURE_2D);
 			utils.drawRectangle(posX, posY, width, heightHalf, screen.color | 0xFF000000);
-			utils.drawRectangle(posX, posY + heightHalf, width, height - heightHalf, screen.previousColor);
+			utils.drawRectangle(posX, posY + heightHalf, width, height - heightHalf, screen.previousColor | 0xFF000000);
 		}
 		
 	}
@@ -472,33 +501,38 @@ public class GuiColorSelectScreen extends GuiScreen implements TextComponentList
 		if(textComponent == textComponentRed) {
 			this.red = textComponentRed.getValue();
 			setColorFromRGB();
-			updateColorUiElements(false, true, true, true);
+			updateColorUiElements(false, true, true, true, true);
 		}
 		if(textComponent == textComponentGreen) {
 			this.green = textComponentGreen.getValue();
 			setColorFromRGB();
-			updateColorUiElements(false, true, true, true);
+			updateColorUiElements(false, true, true, true, true);
 		}
 		if(textComponent == textComponentBlue) {
 			this.blue = textComponentBlue.getValue();
 			setColorFromRGB();
-			updateColorUiElements(false, true, true, true);
+			updateColorUiElements(false, true, true, true, true);
 		}
 		
 		if(textComponent == textComponentHue) {
 			this.hue = textComponentHue.getValue() / 360.0f;
 			setColorFromHSV();
-			updateColorUiElements(true, false, true, true);
+			updateColorUiElements(true, false, true, true, true);
 		}
 		if(textComponent == textComponentSat) {
 			this.saturation = textComponentSat.getValue() / 100.0f;
 			setColorFromHSV();
-			updateColorUiElements(true, false, true, true);
+			updateColorUiElements(true, false, true, true, true);
 		}
 		if(textComponent == textComponentVal) {
 			this.brightness = textComponentVal.getValue() / 100.0f;
 			setColorFromHSV();
-			updateColorUiElements(true, false, true, true);
+			updateColorUiElements(true, false, true, true, true);
+		}
+		if(textComponent == textComponentHex) {
+			this.color = textComponentHex.getColor();
+			setColorFromARGB();
+			updateColorUiElements(true, true, true, true, false);
 		}
 	}
 

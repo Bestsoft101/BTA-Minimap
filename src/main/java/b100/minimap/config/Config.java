@@ -11,7 +11,6 @@ public class Config extends ConfigBase {
 
 	public BooleanOption mapVisible = new BooleanOption("mapVisible", true);
 	public IntegerOption updateSpeed = new IntegerOption("updateSpeed", 1).setMinMax(1, 16);
-	public IntegerOption mapStyle = new IntegerOption("mapStyle", 0).setMinMax(0, 4);
 	public IntegerOption requireItem = new IntegerOption("requireItem", 0).setMinMax(0, 1);
 
 	public BooleanOption mask = new BooleanOption("mask", true);
@@ -34,7 +33,6 @@ public class Config extends ConfigBase {
 
 		options.add(mapVisible);
 		options.add(updateSpeed);
-		options.add(mapStyle);
 		options.add(requireItem);
 
 		options.add(mask);

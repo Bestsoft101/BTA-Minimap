@@ -8,5 +8,7 @@ public class Colors {
 	public static int buttonBackgroundHover = 0xcc808080;
 	public static int buttonText = 0xffffff;
 	public static int buttonTextDeactivated = 0x808080;
+	
+	public static int textInvalid = 0xFF0000;
 
 }

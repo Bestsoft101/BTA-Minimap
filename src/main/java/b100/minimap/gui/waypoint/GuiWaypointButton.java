@@ -47,7 +47,7 @@ public class GuiWaypointButton extends GuiButton {
 			
 			contextMenu.addContextMenuElement(new GuiButton(screen, "Edit").addActionListener((e) -> edit()));
 			contextMenu.addContextMenuElement(new GuiButton(screen, "Teleport").addActionListener((e) -> teleport()).setClickable(minecraftHelper.getEnableCheats()));
-			contextMenu.addContextMenuElement(new GuiButton(screen, "Share").addActionListener((e) -> share()).setClickable(false));
+//			contextMenu.addContextMenuElement(new GuiButton(screen, "Share").addActionListener((e) -> share()).setClickable(false));
 			contextMenu.addContextMenuElement(new GuiButton(screen, "Delete").addActionListener((e) -> delete()));
 			
 			screen.add(contextMenu);

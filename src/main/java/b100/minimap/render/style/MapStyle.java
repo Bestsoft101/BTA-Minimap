@@ -12,4 +12,6 @@ public interface MapStyle {
 	
 	public boolean useLinearFiltering();
 	
+	public void closeStreams();
+	
 }

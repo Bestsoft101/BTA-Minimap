@@ -55,7 +55,7 @@ public class GuiTextComponent extends GuiLabel {
 		
 		glEnable(GL_TEXTURE_2D);
 		
-		int textColor = getTextColor();
+		int textColor = getTextColor() | 0xFF000000;
 		
 		if(!focused || !editable) {
 			textSelection = -1;

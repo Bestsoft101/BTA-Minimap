@@ -31,6 +31,7 @@ import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.SaveHandler;
 import net.minecraft.src.TexturePackBase;
+import net.minecraft.src.TexturePackCustom;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldClient;
 import net.minecraft.src.helper.Buffer;
@@ -178,8 +179,7 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 		NetClientHandler sendQueue = ReflectUtils.getValue(ReflectUtils.getField(WorldClient.class, "sendQueue"), worldClient, NetClientHandler.class);
 		NetworkManager netManager = ReflectUtils.getValue(ReflectUtils.getField(NetClientHandler.class, "netManager"), sendQueue, NetworkManager.class);
 		Socket socket = ReflectUtils.getValue(ReflectUtils.getField(NetworkManager.class, "networkSocket"), netManager, Socket.class);
-		
-		return socket.getInetAddress().getHostName() + ":" + socket.getPort();
+		return socket.getInetAddress().toString() + ":" + socket.getPort();
 	}
 
 	@Override
@@ -246,6 +246,15 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	@Override
 	public IDimension getDefaultDimension(World world) {
 		return getDimensionWrapper(Dimension.overworld);
+	}
+
+	@Override
+	public File getCurrentTexturePackFile() {
+		TexturePackBase texturePackBase = mc.texturePackList.selectedTexturePack;
+		if(texturePackBase instanceof TexturePackCustom) {
+			return ReflectUtils.getValue(ReflectUtils.getField(TexturePackCustom.class, "texturePackFile"), texturePackBase, File.class);
+		}
+		return null;
 	}
 
 }

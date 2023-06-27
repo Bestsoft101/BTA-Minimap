@@ -203,5 +203,41 @@ public abstract class Utils {
 			return null;
 		}
 	}
+	
+	public static int parseColor(String string) {
+		if(string.length() > 8) {
+			throw new NumberFormatException();
+		}
+		int color = 0;
+		for(int i = string.length() - 1; i >= 0; i--) {
+			char c = string.charAt(i);
+			int charValue;
+			if(c >= '0' && c <= '9') {
+				charValue = c - '0';
+			}else if(c >= 'a' && c <= 'f') {
+				charValue = c - 'a' + 10;
+			}else if(c >= 'A' && c <= 'F') {
+				charValue = c - 'A' + 10;
+			}else {
+				throw new NumberFormatException("Invalid character '"+c+"' at index "+i+"!");
+			}
+			color |= charValue << ((string.length() - i - 1) << 2);
+		}
+		return color;
+	}
+	
+	public static String toColorString(int color, boolean includeAlpha) {
+		final String hexString = "0123456789abcdef";
+		StringBuilder builder = new StringBuilder();
+		
+		final int start = includeAlpha ? 0 : 2;
+		for(int i = start; i < 8; i++) {
+			int j = (color >> (7 - i) * 4) & 0xF;
+			
+			builder.append(hexString.charAt(j));
+		}
+		
+		return builder.toString();
+	}
 
 }
