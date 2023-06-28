@@ -21,10 +21,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.ChatAllowedCharacters;
 import net.minecraft.src.Dimension;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.GLAllocation;
+import net.minecraft.src.Gamemode;
 import net.minecraft.src.GuiChat;
+import net.minecraft.src.InventoryPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NetClientHandler;
@@ -146,13 +147,21 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 
 	@Override
 	public boolean doesPlayerHaveCompass() {
-		EntityPlayer player = playerWrapper.player;
-		for(int i=0; i < player.inventory.getSizeInventory(); i++) {
-			ItemStack stack = player.inventory.getStackInSlot(i);
+		PlayerWrapper playerWrapper = (PlayerWrapper) getThePlayer();
+		EntityPlayerSP player = playerWrapper.player;
+		
+		if(player.getGamemode() == Gamemode.creative) {
+			return true;
+		}
+		
+		InventoryPlayer inventory = player.inventory;
+		for(int i=0; i < inventory.getSizeInventory(); i++) {
+			ItemStack stack = inventory.getStackInSlot(i);
 			if(stack != null && stack.getItem() == Item.toolCompass) {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 
