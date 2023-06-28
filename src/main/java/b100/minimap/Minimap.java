@@ -148,8 +148,8 @@ public class Minimap {
 				screen.init();
 			}
 
-			int w = mc.resolution.scaledWidth;
-			int h = mc.resolution.scaledHeight;
+			int w = minecraftHelper.getScaledWidth();
+			int h = minecraftHelper.getScaledHeight();
 			
 			if(w != screen.width || h != screen.height) {
 				screen.width = w;

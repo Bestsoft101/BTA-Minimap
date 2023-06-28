@@ -8,6 +8,7 @@ import b100.minimap.Minimap;
 import b100.minimap.render.block.BlockRenderManager;
 import b100.minimap.render.block.RenderType;
 import b100.minimap.render.block.TileColors;
+import b100.minimap.utils.Utils;
 import net.minecraft.src.Block;
 import net.minecraft.src.World;
 
@@ -110,7 +111,7 @@ public class MapTileRenderer {
 								transparentColor = multiplyColor(transparentColor, block.getBlockBrightness(world, x, y + 1, z));
 							}
 							
-							color = mixColor(color, transparentColor, 0.66f);
+							color = mixColor(color, transparentColor, 0.5f);
 						}
 					}
 					
@@ -122,7 +123,7 @@ public class MapTileRenderer {
 						int y2 = getHeight(maxHeightCache, i0, j0-1);
 						int y3 = getHeight(maxHeightCache, i0-1, j0);
 						
-						if(y0 > maxHeight || y1 > maxHeight || y2 > maxHeight || y3 > maxHeight) brightness *= 0.8f;
+						if(y0 > maxHeight || y1 > maxHeight || y2 > maxHeight || y3 > maxHeight) brightness *= 0.75f;
 					}else if(shadeType == 1) {
 						int y0 = getHeight(maxHeightCache, i0, j0-1);
 						int y1 = getHeight(maxHeightCache, i0-1, j0-1);
@@ -141,6 +142,17 @@ public class MapTileRenderer {
 						
 						if(brightCount > darkCount) brightness *= 1.25f;
 						if(darkCount > brightCount) brightness *= 0.65f;
+					}else if(shadeType == 2) {
+						int offset = 0;
+						
+						offset += maxHeight - getHeight(maxHeightCache, i0 - 1, j0);
+						offset += maxHeight - getHeight(maxHeightCache, i0, j0 - 1);
+						
+						offset += getHeight(maxHeightCache, i0 + 1, j0) - maxHeight;
+						offset += getHeight(maxHeightCache, i0, j0 + 1) - maxHeight;
+						
+						offset = Utils.clamp(offset, -8, 8);
+						brightness = (offset / 8.0f) / 2.0f + 1.0f;
 					}
 					
 					color = multiplyColor(color, brightness);

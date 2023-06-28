@@ -71,4 +71,6 @@ public interface IMinecraftHelper {
 	
 	public File getCurrentTexturePackFile();
 	
+	public int getTextureAtlasSize();
+	
 }

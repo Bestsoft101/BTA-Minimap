@@ -8,7 +8,7 @@ public class MapConfig extends ConfigBase {
 	public IntegerOption mapStyle = new IntegerOption("mapStyle", 0).setMinMax(0, 6);
 	public IntegerOption width = new IntegerOption("width", 16).setMinMax(1, 100);
 	public IntegerOption position = new IntegerOption("position", 1).setMinMax(0, 3);
-	public IntegerOption shadeType = new IntegerOption("shadeType", 1).setMinMax(0, 1);
+	public IntegerOption shadeType = new IntegerOption("shadeType", 1).setMinMax(0, 2);
 	public BooleanOption lighting = new BooleanOption("lighting", true);
 	public IntegerOption zoomLevel = new IntegerOption("zoomLevel", 0);
 	public BooleanOption fullscreenMap = new BooleanOption("fullscreenMap", false);

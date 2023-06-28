@@ -257,4 +257,9 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 		return null;
 	}
 
+	@Override
+	public int getTextureAtlasSize() {
+		return 32;
+	}
+
 }

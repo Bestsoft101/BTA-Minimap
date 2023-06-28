@@ -18,10 +18,11 @@ public class TileColors {
 	}
 	
 	public void createTileColors() {
-		createTileColors(minimap.minecraftHelper.getTextureAsImage("/terrain.png"), 32);
+		createTileColors(minimap.minecraftHelper.getTextureAsImage("/terrain.png"));
 	}
 	
-	public void createTileColors(BufferedImage image, int tiles) {
+	public void createTileColors(BufferedImage image) {
+		int tiles = Minimap.instance.minecraftHelper.getTextureAtlasSize();
 		tilecolors = new int[tiles * tiles];
 		
 		if(image == null) {
