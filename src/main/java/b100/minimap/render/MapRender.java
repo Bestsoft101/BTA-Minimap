@@ -72,6 +72,12 @@ public class MapRender implements WorldListener {
 	public int tileSize;
 	public int iconSize = 16;
 	
+	public boolean roundMap;
+	public boolean enableMask;
+	public boolean enableMaskTexture;
+	
+	public float frameOpacity;
+	
 	public MapRender(Minimap minimap) {
 		this.minimap = minimap;
 		
@@ -138,25 +144,43 @@ public class MapRender implements WorldListener {
 		mapWidth = mapConfig.width.value * 16;
 		mapHeight = mapConfig.width.value * 16;
 		
+		roundMap = mapConfig.roundMap.value;
+		enableMask = enableMaskTexture = minimap.config.mask.value;
+		frameOpacity = minimap.config.mapConfig.frameOpacity.value / 100.0f;
+		
 		final int pad = iconSize;
 		
 		if(mapConfig.fullscreenMap.value) {
+			// Enhance
 			mapWidth = mapHeight = Math.min(displayWidth - pad * 2, displayHeight - pad * 2);
-			zoom = (int) Math.pow(2, mapConfig.fullscreenZoomLevel.value);
 			mapPosX = (displayWidth - mapWidth) / 2;
 			mapPosY = (displayHeight - mapHeight) / 2;
+			if(mapConfig.fullscreenType.value == 1) {
+				roundMap = false;
+				frameOpacity = 0.0f;
+				enableMaskTexture = false;
+			}
+			zoom = (int) Math.pow(2, mapConfig.fullscreenZoomLevel.value);
 		}else {
 			zoom = (int) Math.pow(2, mapConfig.zoomLevel.value);
-			
-			if(mapConfig.position.value == 1 || mapConfig.position.value == 3) {
+			int position = mapConfig.position.value;
+			if(position == 1 || position == 3) {
 				mapPosX = displayWidth - mapWidth - pad;
 			}else {
 				mapPosX = pad;
 			}
-			if(mapConfig.position.value == 2 || mapConfig.position.value == 3) {
+			if(position == 2 || position == 3) {
 				mapPosY = displayHeight - mapHeight - pad;
 			}else {
 				mapPosY = pad;
+			}
+			if(position == 4) {
+				mapPosX = (displayWidth - mapWidth) / 2;
+				mapPosY = pad;
+			}
+			if(position == 5) {
+				mapPosX = (displayWidth - mapWidth) / 2;
+				mapPosY = (displayHeight - mapHeight) / 2;
 			}
 		}
 		
@@ -170,7 +194,7 @@ public class MapRender implements WorldListener {
 		glEnable(GL_BLEND);
 		glBlendFunc(770, 771);
 		
-		if(minimap.config.mask.value) {
+		if(enableMask) {
 			glEnable(GL_DEPTH_TEST);
 			glDepthFunc(GL_ALWAYS);
 			glColorMask(false, false, false, false);
@@ -187,13 +211,14 @@ public class MapRender implements WorldListener {
 			tessellator.draw();
 			
 			glDepthFunc(GL_LEQUAL);
-			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, maskTexture);
-
-			tessellator.startDrawingQuads();
-			tessellator.setColorOpaque_F(0.0f, 1.0f, 0.0f);
-			renderHelper.drawRectangle(tessellator, mapPosX, mapPosY, mapWidth, mapHeight, 0, 0, 1, 1, 64);
-			tessellator.draw();
+			if(enableMaskTexture) {
+				glEnable(GL_TEXTURE_2D);
+				glBindTexture(GL_TEXTURE_2D, maskTexture);
+				tessellator.startDrawingQuads();
+				tessellator.setColorOpaque_F(0.0f, 1.0f, 0.0f);
+				renderHelper.drawRectangle(tessellator, mapPosX, mapPosY, mapWidth, mapHeight, 0, 0, 1, 1, 64);
+				tessellator.draw();	
+			}
 			
 			glColorMask(true, true, true, true);
 		}
@@ -221,7 +246,6 @@ public class MapRender implements WorldListener {
 		
 		glPopMatrix();
 
-		float frameOpacity = minimap.config.mapConfig.frameOpacity.value / 100.0f;
 		if(frameOpacity > 0.0f) {
 			glDisable(GL_ALPHA_TEST);
 			glBindTexture(GL_TEXTURE_2D, mapTexture);
@@ -289,7 +313,7 @@ public class MapRender implements WorldListener {
 			int z0 = mapChunk.getPosZ() * 16 * zoom - (int) (playerPosZ * zoom);
 			
 			int extend = 0;
-			if(mapConfig.rotateMap.value && !mapConfig.roundMap.value) {
+			if(mapConfig.rotateMap.value && !roundMap) {
 				extend = 48;
 			}
 			
@@ -380,7 +404,7 @@ public class MapRender implements WorldListener {
 			boolean isOnMap = true;
 			int border = (int) (mapWidth / 24.0f);
 			
-			if(mapConfig.roundMap.value) {
+			if(roundMap) {
 				double dx = x - mapCenterX;
 				double dy = y - mapCenterY;
 				double rad = (mapWidth - border) / 2;
