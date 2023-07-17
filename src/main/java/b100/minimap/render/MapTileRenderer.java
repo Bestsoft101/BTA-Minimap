@@ -99,13 +99,13 @@ public class MapTileRenderer {
 						}
 						
 						if(renderType == RenderType.OPAQUE) {
-							color = tileColors.getTileColor(block.getBlockTexture(world, x, y, z, 1));
+							color = tileColors.getTileColor(world, x, y, z, block);
 							color = multiplyColor(color, block.colorMultiplier(world, world, x, y, z));
 							if(lighting) {
 								color = multiplyColor(color, block.getBlockBrightness(world, x, y + 1, z));
 							}
 						}else if(renderType == RenderType.TRANSPARENT) {
-							int transparentColor = tileColors.getTileColor(block.getBlockTexture(world, x, y, z, 1));
+							int transparentColor = tileColors.getTileColor(world, x, y, z, block);
 							transparentColor = multiplyColor(transparentColor, block.colorMultiplier(world, world, x, y, z));
 							if(lighting) {
 								transparentColor = multiplyColor(transparentColor, block.getBlockBrightness(world, x, y + 1, z));

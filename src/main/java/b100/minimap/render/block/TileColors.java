@@ -3,33 +3,24 @@ package b100.minimap.render.block;
 import java.awt.image.BufferedImage;
 
 import b100.minimap.Minimap;
+import net.minecraft.src.Block;
+import net.minecraft.src.World;
 
-public class TileColors {
+public abstract class TileColors {
 	
-	private Minimap minimap;
-	private int[] tilecolors;
+	public abstract void createTileColors();
 	
-	public TileColors(Minimap minimap) {
-		this.minimap = minimap;
-	}
+	public abstract int getTileColor(World world, int x, int y, int z, Block block);
 	
-	public int getTileColor(int tile) {
-		return tilecolors[tile];
-	}
-	
-	public void createTileColors() {
-		createTileColors(minimap.minecraftHelper.getTextureAsImage("/terrain.png"));
-	}
-	
-	public void createTileColors(BufferedImage image) {
-		int tiles = Minimap.instance.minecraftHelper.getTextureAtlasSize();
-		tilecolors = new int[tiles * tiles];
-		
+	public void createTileColors(BufferedImage image, int tiles, int[] tileColors) {
 		if(image == null) {
 			Minimap.log("Cannot create tile colors because image is null!");
-			for(int i=0; i < tilecolors.length; i++) {
-				tilecolors[i] = 0xFFFFFFFF;
+			for(int i=0; i < tileColors.length; i++) {
+				tileColors[i] = 0xFFFFFFFF;
 			}
+		}
+		if(tileColors.length < tiles * tiles) {
+			throw new RuntimeException("Invalid array size: " + tileColors.length + ", expected at least " + (tiles * tiles));
 		}
 		
 		Minimap.log("Creating tile colors...");
@@ -50,7 +41,7 @@ public class TileColors {
 					color = 0xFFFFFFFF;
 				}
 				
-				tilecolors[currentTile] = color;
+				tileColors[currentTile] = color;
 			}
 		}
 		

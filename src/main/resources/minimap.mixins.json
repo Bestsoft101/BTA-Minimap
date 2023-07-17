@@ -9,7 +9,8 @@
 		"EntityRenderMixin",
 		"MinecraftMixin",
 		"RenderEngineMixin",
-		"RenderGlobalMixin"
+		"RenderGlobalMixin",
+		"GameSettingsMixin"
     ],
     "injectors": {
         "defaultRequire": 1

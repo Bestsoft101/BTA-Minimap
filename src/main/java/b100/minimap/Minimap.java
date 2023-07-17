@@ -59,7 +59,7 @@ public class Minimap {
 		config = new Config();
 		loadConfig();
 		worldDataManager = new WorldDataManager(this);
-		tileColors = new TileColors(this);
+		tileColors = minecraftHelper.getTileColors();
 		tileColors.createTileColors();
 		blockRenderManager = new BlockRenderManager(tileColors);
 		guiUtils = new GuiUtilsImpl(mc);
