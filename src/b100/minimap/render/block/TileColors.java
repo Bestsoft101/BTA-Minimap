@@ -3,8 +3,8 @@ package b100.minimap.render.block;
 import java.awt.image.BufferedImage;
 
 import b100.minimap.Minimap;
-import net.minecraft.src.Block;
-import net.minecraft.src.World;
+import net.minecraft.core.block.Block;
+import net.minecraft.core.world.World;
 
 public abstract class TileColors {
 	

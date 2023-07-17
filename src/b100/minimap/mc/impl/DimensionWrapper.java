@@ -1,7 +1,7 @@
 package b100.minimap.mc.impl;
 
 import b100.minimap.mc.IDimension;
-import net.minecraft.src.Dimension;
+import net.minecraft.core.world.Dimension;
 
 public class DimensionWrapper implements IDimension {
 
@@ -13,19 +13,19 @@ public class DimensionWrapper implements IDimension {
 	
 	@Override
 	public String getDisplayName() {
-		return dimension.getName();
+		return dimension.getTranslatedName();
 	}
 
 	@Override
 	public String getId() {
-		return String.valueOf(dimension.dimId);
+		return String.valueOf(dimension.id);
 	}
 
 	@Override
 	public int compareTo(IDimension o) {
 		DimensionWrapper w = (DimensionWrapper) o;
 		
-		return dimension.dimId - w.dimension.dimId;
+		return dimension.id - w.dimension.id;
 	}
 
 }

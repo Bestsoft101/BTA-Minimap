@@ -8,7 +8,7 @@ import b100.minimap.render.WorldListener;
 import b100.minimap.render.block.BlockRenderManager;
 import b100.minimap.render.block.TileColors;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.World;
+import net.minecraft.core.world.World;
 
 public interface IMinecraftHelper {
 	

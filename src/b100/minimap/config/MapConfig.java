@@ -15,6 +15,7 @@ public class MapConfig extends ConfigBase {
 	public IntegerOption fullscreenType = new IntegerOption("fullscreenType", 0).setMinMax(0, 1);
 	public IntegerOption fullscreenZoomLevel = new IntegerOption("fullscreenZoomLevel", 0);
 	public BooleanOption rotateMap = new BooleanOption("rotateMap", false);
+	public BooleanOption rotateFrame = new BooleanOption("rotateFrame", false);
 	public BooleanOption roundMap = new BooleanOption("roundMap", false);
 	public IntegerOption frameOpacity = new IntegerOption("frameOpacity", 100).setMinMax(0, 100);
 	public BooleanOption renderAllBlocks = new BooleanOption("showAllBlocks", false);
@@ -33,6 +34,7 @@ public class MapConfig extends ConfigBase {
 		options.add(fullscreenMap);
 		options.add(fullscreenZoomLevel);
 		options.add(rotateMap);
+		options.add(rotateFrame);
 		options.add(roundMap);
 		options.add(frameOpacity);
 		options.add(renderAllBlocks);

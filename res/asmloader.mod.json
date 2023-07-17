@@ -1,0 +1,10 @@
+{
+	"modid": "minimap",
+	"transformers": [
+		"b100.minimap.asm.MinimapTransformer$MinecraftTransformer",
+		"b100.minimap.asm.MinimapTransformer$WorldRendererTransformer",
+		"b100.minimap.asm.MinimapTransformer$RenderGlobalTransformer",
+		"b100.minimap.asm.MinimapTransformer$GameSettingsTransformer",
+		"b100.minimap.asm.MinimapTransformer$RenderEngineTransformer"
+	]
+}

@@ -4,7 +4,7 @@ import java.io.File;
 
 import b100.minimap.Minimap;
 import b100.minimap.utils.Utils;
-import net.minecraft.src.World;
+import net.minecraft.core.world.World;
 
 public class WorldDataManager {
 	

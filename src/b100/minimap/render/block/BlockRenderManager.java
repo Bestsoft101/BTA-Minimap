@@ -1,7 +1,7 @@
 package b100.minimap.render.block;
 
 import b100.minimap.Minimap;
-import net.minecraft.src.Block;
+import net.minecraft.core.block.Block;
 
 public class BlockRenderManager {
 	
@@ -22,7 +22,7 @@ public class BlockRenderManager {
 	}
 	
 	public void setRenderType(Block block, RenderType renderType) {
-		renderTypes[block.blockID] = renderType;
+		renderTypes[block.id] = renderType;
 	}
 	
 	public RenderType getRenderType(int id) {

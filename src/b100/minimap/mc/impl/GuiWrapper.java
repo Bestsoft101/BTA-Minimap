@@ -6,7 +6,7 @@ import org.lwjgl.input.Mouse;
 import b100.minimap.gui.CancelEventException;
 import b100.minimap.gui.GuiScreen;
 
-public class GuiWrapper extends net.minecraft.src.GuiScreen {
+public class GuiWrapper extends net.minecraft.client.gui.GuiScreen {
 	
 	public GuiScreen minimapGui;
 	public int mouseX;
@@ -57,7 +57,7 @@ public class GuiWrapper extends net.minecraft.src.GuiScreen {
 		}
 		if(key == Keyboard.KEY_F11) {
 			if(pressed) {
-				mc.toggleFullscreen();
+				mc.fullscreenHelper.toggleFullscreen();
 			}
 		}else {
 			try{
@@ -100,8 +100,6 @@ public class GuiWrapper extends net.minecraft.src.GuiScreen {
 	}
 	
 	public void onGuiOpened() {
-		skipInput = true;
-		
 		Keyboard.enableRepeatEvents(true);
 		
 		minimapGui.onGuiOpened();

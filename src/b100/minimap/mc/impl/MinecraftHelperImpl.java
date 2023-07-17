@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import com.b100.utils.ReflectUtils;
+
 import b100.minimap.mc.IDimension;
 import b100.minimap.mc.IMinecraftHelper;
 import b100.minimap.mc.Player;
@@ -17,30 +19,30 @@ import b100.minimap.render.WorldListener;
 import b100.minimap.render.block.BlockRenderManager;
 import b100.minimap.render.block.RenderType;
 import b100.minimap.render.block.TileColors;
-import b100.utils.ReflectUtils;
+import net.minecraft.client.GLAllocation;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.Block;
-import net.minecraft.src.ChatAllowedCharacters;
-import net.minecraft.src.Dimension;
-import net.minecraft.src.EntityPlayerSP;
-import net.minecraft.src.GLAllocation;
-import net.minecraft.src.Gamemode;
-import net.minecraft.src.GuiChat;
-import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NetClientHandler;
-import net.minecraft.src.NetworkManager;
-import net.minecraft.src.SaveHandler;
-import net.minecraft.src.TexturePackBase;
-import net.minecraft.src.TexturePackCustom;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldClient;
-import net.minecraft.src.helper.Buffer;
+import net.minecraft.client.entity.player.EntityPlayerSP;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.net.handler.NetClientHandler;
+import net.minecraft.client.render.texturepack.TexturePackBase;
+import net.minecraft.client.render.texturepack.TexturePackCustom;
+import net.minecraft.client.world.WorldClient;
+import net.minecraft.core.Global;
+import net.minecraft.core.block.Block;
+import net.minecraft.core.entity.player.EntityPlayer;
+import net.minecraft.core.item.Item;
+import net.minecraft.core.item.ItemStack;
+import net.minecraft.core.net.NetworkManager;
+import net.minecraft.core.util.helper.Buffer;
+import net.minecraft.core.util.helper.ChatAllowedCharacters;
+import net.minecraft.core.world.Dimension;
+import net.minecraft.core.world.World;
+import net.minecraft.core.world.save.SaveHandlerBase;
+import net.minecraft.core.world.save.SaveHandlerClientSP;
 
 public class MinecraftHelperImpl implements IMinecraftHelper {
 
-	private Minecraft mc = Minecraft.getMinecraft();
+	private Minecraft mc = Minecraft.getMinecraft(Minecraft.class);
 	private PlayerWrapper playerWrapper = new PlayerWrapper();
 	public WorldAccessImpl worldAccessImpl = new WorldAccessImpl();
 	private Map<Dimension, DimensionWrapper> dimensionWrappers = new HashMap<>();
@@ -52,7 +54,7 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 
 	@Override
 	public File getMinecraftDir() {
-		return Minecraft.getMinecraftDir();
+		return Global.accessor.getMinecraftDir();
 	}
 
 	@Override
@@ -148,21 +150,14 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 
 	@Override
 	public boolean doesPlayerHaveCompass() {
-		PlayerWrapper playerWrapper = (PlayerWrapper) getThePlayer();
-		EntityPlayerSP player = playerWrapper.player;
-		
-		if(player.getGamemode() == Gamemode.creative) {
-			return true;
-		}
-		
-		InventoryPlayer inventory = player.inventory;
-		for(int i=0; i < inventory.getSizeInventory(); i++) {
-			ItemStack stack = inventory.getStackInSlot(i);
+		PlayerWrapper wrapper = (PlayerWrapper) getThePlayer();
+		EntityPlayer player = wrapper.player;
+		for(int i=0; i < player.inventory.getSizeInventory(); i++) {
+			ItemStack stack = player.inventory.getStackInSlot(i);
 			if(stack != null && stack.getItem() == Item.toolCompass) {
 				return true;
 			}
 		}
-		
 		return false;
 	}
 
@@ -178,8 +173,8 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 
 	@Override
 	public String getWorldDirectoryName(World world) {
-		SaveHandler saveHandler = (SaveHandler) world.getSaveHandler();
-		File saveDirectory = ReflectUtils.getValue(ReflectUtils.getField(SaveHandler.class, "saveDirectory"), saveHandler, File.class);
+		SaveHandlerClientSP saveHandler = (SaveHandlerClientSP) world.getSaveHandler();
+		File saveDirectory = ReflectUtils.getValue(ReflectUtils.getField(SaveHandlerBase.class, "saveDirectory"), saveHandler, File.class);
 		return saveDirectory.getName();
 	}
 
@@ -194,7 +189,7 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 
 	@Override
 	public boolean isCharacterAllowed(char c) {
-		return ChatAllowedCharacters.allowedCharacters.indexOf(c) != -1;
+		return ChatAllowedCharacters.ALLOWED_CHARACTERS.indexOf(c) != -1;
 	}
 
 	@Override
@@ -205,7 +200,7 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	@Override
 	public void onWorldChanged(World world) {
 		if(world != null) {
-			world.addWorldAccess(worldAccessImpl);	
+			world.addListener(worldAccessImpl);
 		}
 	}
 
@@ -227,7 +222,7 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 
 	@Override
 	public boolean getEnableCheats() {
-		return mc.theWorld.isMultiplayerAndNotHost || mc.theWorld.getWorldInfo().getCheatsEnabled();
+		return mc.theWorld.isClientSide || mc.theWorld.getLevelData().getCheatsEnabled();
 	}
 
 	public DimensionWrapper getDimensionWrapper(Dimension dimension) {
@@ -242,7 +237,7 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	@Override
 	public IDimension getDimension(String id) {
 		try {
-			return getDimensionWrapper(Dimension.dimensionList[Integer.parseInt(id)]);
+			return getDimensionWrapper(Dimension.getDimensionList().get(Integer.parseInt(id)));
 		}catch (NumberFormatException e) {
 			return null;
 		}
@@ -269,7 +264,7 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 
 	@Override
 	public int getTextureAtlasSize() {
-		return 32;
+		return Global.TEXTURE_ATLAS_WIDTH_TILES;
 	}
 
 	@Override

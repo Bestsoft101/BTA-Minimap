@@ -18,7 +18,7 @@ import b100.minimap.gui.GuiTextField;
 import b100.minimap.gui.TextComponentListener;
 import b100.minimap.mc.Player;
 import b100.minimap.waypoint.Waypoint;
-import net.minecraft.src.MathHelper;
+import net.minecraft.core.util.helper.MathHelper;
 
 public abstract class GuiEditWaypointBase extends GuiScreen implements TextComponentListener, ColorListener {
 	

@@ -4,15 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import b100.json.element.JsonArray;
-import b100.json.element.JsonElement;
-import b100.json.element.JsonObject;
+import com.b100.json.element.JsonArray;
+import com.b100.json.element.JsonElement;
+import com.b100.json.element.JsonObject;
+import com.b100.utils.StringReader;
+import com.b100.utils.StringUtils;
+
 import b100.minimap.Minimap;
 import b100.minimap.mc.IDimension;
 import b100.minimap.waypoint.Waypoint;
-import b100.utils.StringReader;
-import b100.utils.StringUtils;
-import net.minecraft.src.World;
+import net.minecraft.core.world.World;
 
 public class WorldData {
 	

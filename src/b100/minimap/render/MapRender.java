@@ -17,9 +17,9 @@ import b100.minimap.mc.IDimension;
 import b100.minimap.mc.Player;
 import b100.minimap.render.style.MapStyle;
 import b100.minimap.waypoint.Waypoint;
-import net.minecraft.src.MathHelper;
-import net.minecraft.src.Tessellator;
-import net.minecraft.src.World;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.core.util.helper.MathHelper;
+import net.minecraft.core.world.World;
 
 public class MapRender implements WorldListener {
 	
@@ -77,6 +77,7 @@ public class MapRender implements WorldListener {
 	public boolean enableMaskTexture;
 	
 	public float frameOpacity;
+	public boolean rotateFrame;
 	
 	public MapRender(Minimap minimap) {
 		this.minimap = minimap;
@@ -147,6 +148,7 @@ public class MapRender implements WorldListener {
 		roundMap = mapConfig.roundMap.value;
 		enableMask = enableMaskTexture = minimap.config.mask.value;
 		frameOpacity = minimap.config.mapConfig.frameOpacity.value / 100.0f;
+		rotateFrame = roundMap && minimap.config.mapConfig.rotateFrame.value;
 		
 		final int pad = iconSize;
 		
@@ -251,7 +253,12 @@ public class MapRender implements WorldListener {
 			glBindTexture(GL_TEXTURE_2D, mapTexture);
 			glColor4f(1.0f, 1.0f, 1.0f, frameOpacity);
 			tessellator.startDrawingQuads();
-			renderHelper.drawRectangle(tessellator, mapPosX, mapPosY, mapWidth, mapHeight, 0.0f, 0.0f, 1.0f, 1.0f, 64);
+			if(rotateFrame) {
+				renderHelper.drawRotatedRectangle(tessellator, mapPosX, mapPosY, mapWidth, mapHeight, 0.0f, 0.0f, 1.0f, 1.0f, 64, Math.toRadians(playerRotation));
+			}else {
+				renderHelper.drawRectangle(tessellator, mapPosX, mapPosY, mapWidth, mapHeight, 0.0f, 0.0f, 1.0f, 1.0f, 64);
+			}
+			
 			tessellator.draw();
 			glEnable(GL_ALPHA_TEST);
 		}
@@ -501,7 +508,7 @@ public class MapRender implements WorldListener {
 					continue;
 				}
 				
-				if(!world.checkChunksExist(x0 - 8, 0, z0 - 8, x0 + 24, 0, z0 + 24)) {
+				if(!world.areBlocksLoaded(x0 - 8, 0, z0 - 8, x0 + 24, 0, z0 + 24)) {
 					continue;
 				}
 				

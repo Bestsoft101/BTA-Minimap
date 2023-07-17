@@ -24,6 +24,7 @@ public class GuiConfigMap extends GuiScreen implements OptionListener {
 		options.add("Fullscreen Map Type", new GuiOptionButtonInteger(this, config.fullscreenType));
 		options.add("Round Map", new GuiOptionButtonBoolean(this, config.roundMap).addOptionListener(this));
 		options.add("Rotate Map", new GuiOptionButtonBoolean(this, config.rotateMap));
+		options.add("Rotate Frame", new GuiOptionButtonBoolean(this, config.rotateFrame));
 		options.add("Position", new GuiOptionButtonInteger(this, config.position).setScrollingEnabled(false));
 		options.add("Size", new GuiOptionButtonInteger(this, config.width));
 		options.add("Frame Opacity", new GuiOptionButtonInteger(this, config.frameOpacity));

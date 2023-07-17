@@ -27,7 +27,7 @@ import b100.minimap.render.style.MapStyleCustom;
 import b100.minimap.render.style.MapStyleGenerated;
 import b100.minimap.render.style.MapStyleInternal;
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.World;
+import net.minecraft.core.world.World;
 
 public class Minimap {
 	

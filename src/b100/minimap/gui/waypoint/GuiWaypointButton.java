@@ -1,8 +1,6 @@
 package b100.minimap.gui.waypoint;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.*;
 
 import b100.minimap.Minimap;
 import b100.minimap.gui.Colors;

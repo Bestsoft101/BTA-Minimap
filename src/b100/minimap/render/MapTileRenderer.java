@@ -9,8 +9,9 @@ import b100.minimap.render.block.BlockRenderManager;
 import b100.minimap.render.block.RenderType;
 import b100.minimap.render.block.TileColors;
 import b100.minimap.utils.Utils;
-import net.minecraft.src.Block;
-import net.minecraft.src.World;
+import net.minecraft.client.render.block.color.BlockColorDispatcher;
+import net.minecraft.core.block.Block;
+import net.minecraft.core.world.World;
 
 public class MapTileRenderer {
 	
@@ -100,13 +101,13 @@ public class MapTileRenderer {
 						
 						if(renderType == RenderType.OPAQUE) {
 							color = tileColors.getTileColor(world, x, y, z, block);
-							color = multiplyColor(color, block.colorMultiplier(world, world, x, y, z));
+							color = multiplyColor(color, BlockColorDispatcher.getInstance().getDispatch(block).getWorldColor(world, x, y, z));
 							if(lighting) {
 								color = multiplyColor(color, block.getBlockBrightness(world, x, y + 1, z));
 							}
 						}else if(renderType == RenderType.TRANSPARENT) {
 							int transparentColor = tileColors.getTileColor(world, x, y, z, block);
-							transparentColor = multiplyColor(transparentColor, block.colorMultiplier(world, world, x, y, z));
+							transparentColor = multiplyColor(transparentColor, BlockColorDispatcher.getInstance().getDispatch(block).getWorldColor(world, x, y, z));
 							if(lighting) {
 								transparentColor = multiplyColor(transparentColor, block.getBlockBrightness(world, x, y + 1, z));
 							}

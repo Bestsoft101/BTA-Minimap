@@ -1,7 +1,7 @@
 package b100.minimap.mc.impl;
 
 import b100.minimap.mc.Player;
-import net.minecraft.src.EntityPlayerSP;
+import net.minecraft.client.entity.player.EntityPlayerSP;
 
 public class PlayerWrapper implements Player {
 	
@@ -9,39 +9,39 @@ public class PlayerWrapper implements Player {
 
 	@Override
 	public double getRotationYaw() {
-		return player.rotationYaw;
+		return player.yRot;
 	}
 
 	@Override
 	public double getRotationPitch() {
-		return player.rotationPitch;
+		return player.xRot;
 	}
 
 	@Override
 	public double getPosX(float partialTicks) {
-		return player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
+		return player.xOld + (player.x - player.xOld) * partialTicks;
 	}
 
 	@Override
 	public double getPosY(float partialTicks) {
-		return player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
+		return player.yOld + (player.y - player.yOld) * partialTicks;
 	}
 
 	@Override
 	public double getPosZ(float partialTicks) {
-		return player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+		return player.zOld + (player.z - player.zOld) * partialTicks;
 	}
 
 	@Override
 	public void teleportTo(int x, int y, int z) {
 		double x1 = x + 0.5;
-		double y1 = (y - 1) + player.yOffset + 0.01f;
+		double y1 = (y - 1) + player.heightOffset + 0.01f;
 		double z1 = z + 0.5;
 		
-		if(player.worldObj.isMultiplayerAndNotHost) {
+		if(player.world.isClientSide) {
 			player.sendChatMessage("/tp "+player.username+" "+x1+" "+y1+" "+z1);
 		}else {
-			player.setPosition(x1, y1, z1);
+			player.setPos(x1, y1, z1);
 		}
 	}
 

@@ -1,6 +1,7 @@
 package b100.minimap.waypoint;
 
-import b100.json.element.JsonObject;
+import com.b100.json.element.JsonObject;
+
 import b100.minimap.Minimap;
 import b100.minimap.data.WorldData;
 import b100.minimap.mc.IDimension;
