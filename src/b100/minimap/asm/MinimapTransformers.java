@@ -11,9 +11,9 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import b100.asmloader.ClassTransformer;
 
-public class MinimapTransformer {
+public class MinimapTransformers {
 	
-	public static class MinecraftTransformer extends ClassTransformer {
+	class MinecraftTransformer extends ClassTransformer {
 
 		@Override
 		public boolean accepts(String className) {
@@ -32,7 +32,7 @@ public class MinimapTransformer {
 		}
 	}
 	
-	public static class WorldRendererTransformer extends ClassTransformer {
+	class WorldRendererTransformer extends ClassTransformer {
 
 		@Override
 		public boolean accepts(String className) {
@@ -53,7 +53,7 @@ public class MinimapTransformer {
 		}
 	}
 	
-	public static class RenderGlobalTransformer extends ClassTransformer {
+	class RenderGlobalTransformer extends ClassTransformer {
 
 		@Override
 		public boolean accepts(String className) {
@@ -72,7 +72,7 @@ public class MinimapTransformer {
 		}
 	}
 	
-	public static class GameSettingsTransformer extends ClassTransformer {
+	class GameSettingsTransformer extends ClassTransformer {
 
 		@Override
 		public boolean accepts(String className) {
@@ -94,7 +94,7 @@ public class MinimapTransformer {
 		
 	}
 	
-	public static class RenderEngineTransformer extends ClassTransformer {
+	class RenderEngineTransformer extends ClassTransformer {
 
 		@Override
 		public boolean accepts(String className) {
