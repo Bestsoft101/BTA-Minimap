@@ -182,6 +182,9 @@ public class Minimap {
 	}
 	
 	public void keyEvent(Keybind keybind, boolean press) {
+		if(Keyboard.isKeyDown(Keyboard.KEY_F3)) {
+			return;
+		}
 		if(press) {
 			if(keybind == config.keyMap) guiUtils.displayGui(new GuiConfigGeneral(null));
 			if(keybind == config.keyHideMap) config.mapVisible.value = !config.mapVisible.value;
