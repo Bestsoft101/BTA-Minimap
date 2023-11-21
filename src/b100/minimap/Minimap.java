@@ -137,20 +137,51 @@ public class Minimap {
 		boolean unlocked = false;
 		if(config.requireItem.value == 0) unlocked = true;
 		if(config.requireItem.value == 1) unlocked = minecraftHelper.doesPlayerHaveCompass();
+
+		GuiScreen screen = guiUtils.getCurrentScreen();
 		
-		if(config.mapVisible.value && unlocked && minecraftHelper.isGuiVisible() && !minecraftHelper.isDebugScreenOpened() && (!guiUtils.isGuiOpened() || guiUtils.isMinimapGuiOpened() || minecraftHelper.isChatOpened())) {
-			mapRender.renderMap(partialTicks);
+		boolean renderMap = config.mapVisible.value && unlocked && minecraftHelper.isGuiVisible() && !minecraftHelper.isDebugScreenOpened() && (!guiUtils.isGuiOpened() || guiUtils.isMinimapGuiOpened() || minecraftHelper.isChatOpened()); 
+		boolean renderGui = screen != null;
+		
+		if(!renderMap && !renderGui) {
+			return;
 		}
 		
-		GuiScreen screen = guiUtils.getCurrentScreen();
-		if(screen != null) {
+		glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_FOG);
+
+		glColor3d(1.0, 1.0, 1.0);
+		
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		glLoadIdentity();
+		
+		if(renderMap) {
+			glPushMatrix();
+			glOrtho(0, minecraftHelper.getDisplayWidth(), minecraftHelper.getDisplayHeight(), 0, -1000, 1000);
+			
+			mapRender.renderMap(partialTicks);
+			
+			glPopMatrix();
+		}
+		
+		if(renderGui) {
+			float guiScale = minecraftHelper.getGuiScaleFactor();
+			
+			glPushMatrix();
+			glOrtho(0, minecraftHelper.getDisplayWidth() / guiScale, minecraftHelper.getDisplayHeight() / guiScale, 0, -1000, 1000);
+			
 			if(!screen.isInitialized()) {
 				screen.init();
 			}
 
 			int w = minecraftHelper.getScaledWidth();
 			int h = minecraftHelper.getScaledHeight();
-			
 			if(w != screen.width || h != screen.height) {
 				screen.width = w;
 				screen.height = h;
@@ -162,7 +193,13 @@ public class Minimap {
 			glEnable(GL_BLEND);
 			glBlendFunc(770, 771);
 			screen.draw(partialTicks);
+			
+			glPopMatrix();
 		}
+		
+		glPopMatrix();
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
 	}
 	
 	public void updateInput() {

@@ -96,21 +96,6 @@ public class MapRender implements WorldListener {
 	}
 	
 	public void renderMap(float partialTicks) {
-		glDisable(GL_LIGHTING);
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_FOG);
-		
-		glColor3d(1.0, 1.0, 1.0);
-		
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		glOrtho(0, minimap.minecraftHelper.getDisplayWidth(), minimap.minecraftHelper.getDisplayHeight(), 0, -1000, 1000);
-		
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-		glLoadIdentity();
-		
 		Player player = minimap.minecraftHelper.getThePlayer();
 		
 		playerPosX = player.getPosX(partialTicks);
@@ -129,11 +114,6 @@ public class MapRender implements WorldListener {
 		updateChunks();
 		
 		drawMapOnScreen();
-		
-		glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
 	}
 	
 	private void drawMapOnScreen() {
