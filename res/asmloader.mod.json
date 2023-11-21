@@ -2,5 +2,8 @@
 	"modid": "minimap",
 	"transformers": [
 		"b100.minimap.asm.MinimapTransformers"
+	],
+	"depends": [
+		"b100utils"
 	]
 }
