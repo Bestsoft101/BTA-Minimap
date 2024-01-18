@@ -71,7 +71,7 @@ public class GuiUtilsImpl implements IGuiUtils {
 		if(screen != null) {
 			GuiWrapper wrapper = new GuiWrapper(screen);
 			mc.displayGuiScreen(wrapper);
-			wrapper.onGuiOpened();
+			wrapper.onOpened();
 		}else {
 			mc.displayGuiScreen(null);
 		}

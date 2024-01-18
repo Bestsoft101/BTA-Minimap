@@ -57,7 +57,7 @@ public class GuiWrapper extends net.minecraft.client.gui.GuiScreen {
 		}
 		if(key == Keyboard.KEY_F11) {
 			if(pressed) {
-				mc.fullscreenHelper.toggleFullscreen();
+				mc.gameWindow.toggleFullscreen();
 			}
 		}else {
 			try{
@@ -93,13 +93,13 @@ public class GuiWrapper extends net.minecraft.client.gui.GuiScreen {
 	}
 	
 	@Override
-	public void onGuiClosed() {
+	public void onClosed() {
 		Keyboard.enableRepeatEvents(false);
 		
 		minimapGui.onGuiClosed();
 	}
-	
-	public void onGuiOpened() {
+
+	public void onOpened() {
 		Keyboard.enableRepeatEvents(true);
 		
 		minimapGui.onGuiOpened();
