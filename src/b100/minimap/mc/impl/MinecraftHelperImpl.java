@@ -25,7 +25,6 @@ import net.minecraft.client.entity.player.EntityPlayerSP;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.net.handler.NetClientHandler;
 import net.minecraft.client.render.texturepack.TexturePack;
-import net.minecraft.client.render.texturepack.TexturePackCustom;
 import net.minecraft.client.world.WorldClient;
 import net.minecraft.core.Global;
 import net.minecraft.core.block.Block;
@@ -252,16 +251,7 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	public IDimension getDefaultDimension(World world) {
 		return getDimensionWrapper(Dimension.overworld);
 	}
-
-	@Override
-	public File getCurrentTexturePackFile() {
-		TexturePack texturePackBase = mc.texturePackList.selectedTexturePack;
-		if(texturePackBase instanceof TexturePackCustom) {
-			return ReflectUtils.getValue(ReflectUtils.getField(TexturePackCustom.class, "file"), texturePackBase, File.class);
-		}
-		return null;
-	}
-
+	
 	@Override
 	public int getTextureAtlasSize() {
 		return Global.TEXTURE_ATLAS_WIDTH_TILES;
@@ -270,6 +260,11 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	@Override
 	public TileColors getTileColors() {
 		return TileColorsBTA.instance;
+	}
+	
+	@Override
+	public InputStream getResource(String path) {
+		return mc.texturePackList.selectedTexturePack.getResourceAsStream(path);
 	}
 
 }

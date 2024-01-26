@@ -2,6 +2,7 @@ package b100.minimap.mc;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import b100.minimap.render.WorldListener;
@@ -70,7 +71,7 @@ public interface IMinecraftHelper {
 	
 	public IDimension getDefaultDimension(World world);
 	
-	public File getCurrentTexturePackFile();
+	public InputStream getResource(String path);
 	
 	public int getTextureAtlasSize();
 	
