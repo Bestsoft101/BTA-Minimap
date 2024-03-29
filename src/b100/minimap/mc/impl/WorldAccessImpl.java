@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import b100.minimap.render.WorldListener;
-import net.minecraft.core.block.Block;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.player.EntityPlayer;
-import net.minecraft.core.enums.EnumBlockSoundEffectType;
-import net.minecraft.core.sound.SoundType;
+import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.world.LevelListener;
 
 public class WorldAccessImpl implements LevelListener {
@@ -54,14 +52,9 @@ public class WorldAccessImpl implements LevelListener {
 	public void levelEvent(EntityPlayer var1, int var2, int var3, int var4, int var5, int var6) {
 		
 	}
-
+	
 	@Override
-	public void playBlockSoundEffect(Block var1, EnumBlockSoundEffectType var2, double var3, double var5, double var7) {
-		
-	}
-
-	@Override
-	public void playSound(String var1, SoundType var2, double var3, double var5, double var7, float var9, float var10) {
+	public void playSound(Entity player, String var1, SoundCategory var2, double var3, double var5, double var7, float var9, float var10) {
 		
 	}
 

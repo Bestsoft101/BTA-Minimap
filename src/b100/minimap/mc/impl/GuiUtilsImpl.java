@@ -6,7 +6,7 @@ import b100.minimap.gui.GuiScreen;
 import b100.minimap.gui.IGuiUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.core.sound.SoundType;
+import net.minecraft.core.sound.SoundCategory;
 
 public class GuiUtilsImpl implements IGuiUtils {
 
@@ -53,7 +53,7 @@ public class GuiUtilsImpl implements IGuiUtils {
 
 	@Override
 	public void playButtonSound() {
-		mc.sndManager.playSound("random.click", SoundType.GUI_SOUNDS, 1.0f, 1.0f);
+		mc.sndManager.playSound("random.click", SoundCategory.GUI_SOUNDS, 1.0f, 1.0f);
 	}
 
 	@Override
