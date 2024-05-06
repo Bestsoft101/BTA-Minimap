@@ -1,6 +1,6 @@
 package b100.minimap.render;
 
-import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.tessellator.Tessellator;
 
 public class RenderHelper {
 	

@@ -19,17 +19,17 @@ public class PlayerWrapper implements Player {
 
 	@Override
 	public double getPosX(float partialTicks) {
-		return player.xOld + (player.x - player.xOld) * partialTicks;
+		return player.xo + (player.x - player.xo) * partialTicks;
 	}
 
 	@Override
 	public double getPosY(float partialTicks) {
-		return player.yOld + (player.y - player.yOld) * partialTicks;
+		return player.yo + (player.y - player.yo) * partialTicks;
 	}
 
 	@Override
 	public double getPosZ(float partialTicks) {
-		return player.zOld + (player.z - player.zOld) * partialTicks;
+		return player.zo + (player.z - player.zo) * partialTicks;
 	}
 
 	@Override

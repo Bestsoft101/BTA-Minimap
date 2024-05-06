@@ -24,7 +24,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.EntityPlayerSP;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.net.handler.NetClientHandler;
-import net.minecraft.client.render.texturepack.TexturePack;
 import net.minecraft.client.world.WorldClient;
 import net.minecraft.core.Global;
 import net.minecraft.core.block.Block;
@@ -112,12 +111,10 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 
 	@Override
 	public BufferedImage getTextureAsImage(String path) {
-		TexturePack texturePack = mc.texturePackList.selectedTexturePack;
-		
 		InputStream stream = null;
 		
 		try {
-			stream = texturePack.getResourceAsStream(path);
+			stream = mc.texturePackList.getResourceAsStream(path);
 			
 			return ImageIO.read(stream);
 		}catch (Exception e) {
@@ -253,18 +250,13 @@ public class MinecraftHelperImpl implements IMinecraftHelper {
 	}
 	
 	@Override
-	public int getTextureAtlasSize() {
-		return Global.TEXTURE_ATLAS_WIDTH_TILES;
-	}
-
-	@Override
 	public TileColors getTileColors() {
 		return TileColorsBTA.instance;
 	}
 	
 	@Override
 	public InputStream getResource(String path) {
-		return mc.texturePackList.selectedTexturePack.getResourceAsStream(path);
+		return mc.texturePackList.getResourceAsStream(path);
 	}
 
 }

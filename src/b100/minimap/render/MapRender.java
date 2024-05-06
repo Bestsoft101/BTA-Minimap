@@ -17,7 +17,7 @@ import b100.minimap.mc.IDimension;
 import b100.minimap.mc.Player;
 import b100.minimap.render.style.MapStyle;
 import b100.minimap.waypoint.Waypoint;
-import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
 

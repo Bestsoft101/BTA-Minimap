@@ -73,8 +73,6 @@ public interface IMinecraftHelper {
 	
 	public InputStream getResource(String path);
 	
-	public int getTextureAtlasSize();
-	
 	public TileColors getTileColors();
 	
 }

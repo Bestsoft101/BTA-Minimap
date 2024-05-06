@@ -5,7 +5,7 @@ import static org.lwjgl.opengl.GL11.*;
 import b100.minimap.gui.GuiScreen;
 import b100.minimap.gui.IGuiUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.core.sound.SoundCategory;
 
 public class GuiUtilsImpl implements IGuiUtils {
