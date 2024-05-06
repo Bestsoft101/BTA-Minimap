@@ -20,6 +20,8 @@ public class MapConfig extends ConfigBase {
 	public IntegerOption frameOpacity = new IntegerOption("frameOpacity", 100).setMinMax(0, 100);
 	public BooleanOption renderAllBlocks = new BooleanOption("showAllBlocks", false);
 	public BooleanOption showWaypoints = new BooleanOption("showWaypoints", true);
+	public BooleanOption showWaypointLabels = new BooleanOption("showWaypointLabels", true);
+	public IntegerOption waypointLabelSize = new IntegerOption("waypointLabelSize", 1).setMinMax(1, 4);
 	
 	@Override
 	public List<Option<?>> getAllOptions() {
@@ -40,6 +42,8 @@ public class MapConfig extends ConfigBase {
 		options.add(renderAllBlocks);
 		options.add(showWaypoints);
 		options.add(fullscreenType);
+		options.add(showWaypointLabels);
+		options.add(waypointLabelSize);
 		
 		return options;
 	}

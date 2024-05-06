@@ -219,7 +219,9 @@ public class MapRender implements WorldListener {
 			glPushMatrix();
 			glRotated(-playerRotation + 180.0f, 0, 0, 1);
 		}
-		
+
+		glColor3d(1.0, 1.0, 1.0);
+		glEnable(GL_TEXTURE_2D);
 		renderMapTiles();
 		
 		if(rotate) {
@@ -244,8 +246,9 @@ public class MapRender implements WorldListener {
 		}
 
 		glDisable(GL_DEPTH_TEST);
-
+		
 		renderWaypoints();
+		
 		renderPlayerArrow();
 		
 		if(minimap.config.showTiles.value) {
@@ -264,8 +267,6 @@ public class MapRender implements WorldListener {
 	}
 	
 	public void renderMapTiles() {
-		glColor3d(1.0, 1.0, 1.0);
-		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, mapTileManager.texture);
 		
 		boolean startedDrawing = false;
@@ -342,7 +343,7 @@ public class MapRender implements WorldListener {
 		if(waypoints.size() == 0) {
 			return;
 		}
-		
+
 		int waypointTex = minimap.minecraftHelper.getTexture("%blur%/waypoint.png");
 		int waypointArrowTex = minimap.minecraftHelper.getTexture("%blur%/waypoint_arrow.png");
 		
@@ -426,6 +427,8 @@ public class MapRender implements WorldListener {
 				}
 			}
 			
+			float zLevel = 0.0f;
+			
 			if(isOnMap) {
 				if(currentTex != waypointTex) {
 					glBindTexture(GL_TEXTURE_2D, waypointTex);
@@ -437,12 +440,40 @@ public class MapRender implements WorldListener {
 					glBindTexture(GL_TEXTURE_2D, waypointArrowTex);
 					currentTex = waypointArrowTex;
 				}
+				zLevel = 100.0f;
 			}
 			
 			tessellator.startDrawingQuads();
 			tessellator.setColorOpaque_I(waypoint.color);
-			renderHelper.drawIcon(tessellator, x, y, iconSize, 0, angle);
+			renderHelper.drawIcon(tessellator, x, y, iconSize, zLevel, angle);
 			tessellator.draw();
+			
+			if(isOnMap && mapConfig.showWaypointLabels.value) {
+				int size = mapConfig.waypointLabelSize.value;
+
+				int w = renderHelper.getStringWidth(waypoint.name);
+				int x1 = (int) (x - (w * size) / 2);
+				int y1 = (int) (y + 14);
+				
+				glPushMatrix();
+				glTranslatef(x1, y1, 0.0f);
+				glScalef(size, size, size);
+				
+				x1 = 0;
+				y1 = 0;
+				
+				glDisable(GL_TEXTURE_2D);
+				glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
+				tessellator.startDrawingQuads();
+				renderHelper.drawRectangle(tessellator, x1 - 1, y1 - 1, w + 2, 10, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+				tessellator.draw();
+				
+				glEnable(GL_TEXTURE_2D);
+				renderHelper.drawString(waypoint.name, x1, y1, 0xFFFFFFFF, false);
+				currentTex = 0;
+				
+				glPopMatrix();
+			}
 		}
 	}
 	

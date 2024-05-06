@@ -32,6 +32,8 @@ public class GuiConfigMap extends GuiScreen implements OptionListener {
 		options.add("Lighting", new GuiOptionButtonBoolean(this, config.lighting).addOptionListener(this));
 		options.add("Show All Blocks", new GuiOptionButtonBoolean(this, config.renderAllBlocks).addOptionListener(this));
 		options.add("Show Waypoints", new GuiOptionButtonBoolean(this, config.showWaypoints));
+		options.add("Waypoint Labels", new GuiOptionButtonBoolean(this, config.showWaypointLabels));
+		options.add("Waypoint Label Size", new GuiOptionButtonInteger(this, config.waypointLabelSize));
 		
 		navBottom = add(new GuiNavigationContainer(this, options, Position.BOTTOM));
 		navBottom.add(new GuiButtonNavigation(this, "Back", options).addActionListener((e) -> back()));
